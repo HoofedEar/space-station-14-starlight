@@ -1,5 +1,6 @@
 using Content.Shared.Damage;
 using Content.Shared.FixedPoint;
+using Content.Shared.Weapons.Melee.Components;
 using Robust.Shared.Audio;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
@@ -100,10 +101,10 @@ public sealed partial class MeleeWeaponComponent : Component
     public Angle Angle = Angle.FromDegrees(60);
 
     [DataField, AutoNetworkedField]
-    public EntProtoId Animation = "WeaponArcThrust";
+    public EntProtoId<WeaponArcVisualsComponent> Animation = "WeaponArcThrust";
 
     [DataField, AutoNetworkedField]
-    public EntProtoId WideAnimation = "WeaponArcSlash";
+    public EntProtoId<WeaponArcVisualsComponent> WideAnimation = "WeaponArcSlash";
 
     /// <summary>
     /// Rotation of the animation.
