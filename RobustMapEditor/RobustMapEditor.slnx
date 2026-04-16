@@ -1,0 +1,27 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Release" />
+    <BuildType Name="Tools" />
+  </Configurations>
+
+  <Folder Name="/Editor/">
+    <Project Path="RobustMapEditor.Core/RobustMapEditor.Core.csproj" />
+    <Project Path="RobustMapEditor.Ui/RobustMapEditor.Ui.csproj" />
+  </Folder>
+
+  <!--
+    Content.IntegrationTests is Core's direct project reference; listing it here
+    (and letting MSBuild/IDEs resolve its transitive deps) gives us the whole
+    engine + content tree without enumerating every Content.* and Robust.*
+    project individually. Add more projects here if the IDE needs them loaded
+    explicitly for navigation.
+  -->
+  <Folder Name="/Dependencies/">
+    <Project Path="../Content.IntegrationTests/Content.IntegrationTests.csproj" />
+  </Folder>
+
+  <Folder Name="/Project Files/">
+    <File Path="README.md" />
+  </Folder>
+</Solution>

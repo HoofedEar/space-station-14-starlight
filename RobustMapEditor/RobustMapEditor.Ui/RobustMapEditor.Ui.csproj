@@ -1,0 +1,67 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <OutputPath>..\..\bin\RobustMapEditor\</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <RootNamespace>RobustMapEditor.Ui</RootNamespace>
+    <AssemblyName>RobustMapEditor</AssemblyName>
+    <Nullable>enable</Nullable>
+    <LangVersion>14</LangVersion>
+    <!--
+      RobustToolbox's Directory.Packages.props disables implicit central package
+      management (it's only enabled for projects that import Robust.Properties.targets).
+      We want to resolve Avalonia/MVVM versions from the shared props, so opt in here.
+    -->
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <!-- ImageSharpBridge uses raw framebuffer pointer copies to avoid a PNG encode/decode pass. -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <ServerGarbageCollection>true</ServerGarbageCollection>
+    <!--
+      The engine already defines its own Main via Robust.Client. We're not using
+      Robust.Client here, but Content.IntegrationTests (via Core) pulls in a lot
+      of engine bits; silence analyzer warnings that don't apply to a tool project.
+    -->
+    <NoWarn>$(NoWarn);CS1591;CA1416</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RobustMapEditor.Core\RobustMapEditor.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Desktop" />
+    <PackageReference Include="Avalonia.Themes.Fluent" />
+    <PackageReference Include="Avalonia.Fonts.Inter" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <!-- Avalonia.Diagnostics is debug-only so we don't ship the dev tools overlay. -->
+    <PackageReference Include="Avalonia.Diagnostics" Condition="'$(Configuration)' == 'Debug'" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
+
+  <!--
+    RobustToolbox ships an Avalonia.Base stub project (RobustToolbox/Avalonia.Base/Avalonia.Base.csproj)
+    that exists only so Rider's XAML tooling can resolve Avalonia types while the engine's custom
+    Robust.Xaml pipeline is active. The stub emits an empty 'Avalonia.Base.dll' stamped with the
+    engine version (currently 272.0.0.0). Because Robust.Client directly references that stub,
+    it rides in transitively through Content.IntegrationTests -> RobustMapEditor.Core, and its
+    output file collides with the real Avalonia.Base.dll from the Avalonia 11 NuGet package.
+    At runtime, whichever copies last wins and 'Avalonia.AvaloniaObject' vanishes with a TypeLoadException.
+    Strip the stub from our copy-local set before the Copy target runs so only the real DLL ships.
+  -->
+  <Target Name="StripRobustToolboxAvaloniaStub" AfterTargets="ResolveAssemblyReferences" BeforeTargets="_CopyFilesMarkedCopyLocal">
+    <ItemGroup>
+      <ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)"
+                               Condition="'%(FileName)%(Extension)' == 'Avalonia.Base.dll' and $([System.String]::Copy('%(FullPath)').Replace('\','/').Contains('/RobustToolbox/Avalonia.Base/'))" />
+      <ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)"
+                               Condition="'%(FileName)%(Extension)' == 'Avalonia.Base.pdb' and $([System.String]::Copy('%(FullPath)').Replace('\','/').Contains('/RobustToolbox/Avalonia.Base/'))" />
+    </ItemGroup>
+  </Target>
+</Project>

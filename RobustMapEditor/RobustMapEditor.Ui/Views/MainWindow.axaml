@@ -1,0 +1,319 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:RobustMapEditor.Ui.ViewModels"
+        xmlns:views="clr-namespace:RobustMapEditor.Ui.Views"
+        x:Class="RobustMapEditor.Ui.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="{Binding WindowTitle}"
+        Width="1280" Height="820"
+        MinWidth="800" MinHeight="600">
+
+    <Window.Styles>
+        <!-- Tile palette entry: small bordered card, highlights when selected. -->
+        <Style Selector="Button.tile-palette-entry">
+            <Setter Property="Padding" Value="4" />
+            <Setter Property="Margin" Value="2" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="#30FFFFFF" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="3" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        </Style>
+        <Style Selector="Button.tile-palette-entry:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#20FFFFFF" />
+        </Style>
+        <Style Selector="Button.tile-palette-entry.selected">
+            <Setter Property="Background" Value="#403080FF" />
+            <Setter Property="BorderBrush" Value="#FF3080FF" />
+        </Style>
+    </Window.Styles>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+
+        <!-- Menu -->
+        <Menu Grid.Row="0">
+            <MenuItem Header="_File">
+                <MenuItem Header="_Open Map..."
+                          InputGesture="Ctrl+O"
+                          Command="{Binding OpenMapCommand}" />
+                <MenuItem Header="_Save"
+                          InputGesture="Ctrl+S"
+                          Command="{Binding SaveCommand}" />
+                <MenuItem Header="Save _As..."
+                          InputGesture="Ctrl+Shift+S"
+                          Command="{Binding SaveAsCommand}" />
+                <Separator />
+                <MenuItem Header="E_xit" Click="OnExitClicked" />
+            </MenuItem>
+            <MenuItem Header="_Edit">
+                <MenuItem Header="_Undo"
+                          InputGesture="Ctrl+Z"
+                          Command="{Binding UndoCommand}" />
+                <MenuItem Header="_Redo"
+                          InputGesture="Ctrl+Y"
+                          Command="{Binding RedoCommand}" />
+                <Separator />
+                <MenuItem Header="Re_vert to Disk"
+                          Command="{Binding RevertCommand}" />
+            </MenuItem>
+            <MenuItem Header="_View">
+                <MenuItem Header="_Reset View" Click="OnResetViewClicked" />
+            </MenuItem>
+        </Menu>
+
+        <!-- Main content area: canvas on the left, tile palette on the right, split by GridSplitter. -->
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto,240">
+
+            <!-- Canvas area -->
+            <Grid Grid.Column="0">
+                <views:MapCanvas x:Name="MapCanvasControl" />
+
+                <!-- Splash overlay during initial engine boot -->
+                <Border IsVisible="{Binding IsInitializing}"
+                        Background="#CC1A1A1A">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12">
+                        <TextBlock Text="Booting headless engine..."
+                                   FontSize="18" HorizontalAlignment="Center" />
+                        <ProgressBar IsIndeterminate="True" Width="280" />
+                        <TextBlock Text="{Binding StatusMessage}" Opacity="0.6"
+                                   HorizontalAlignment="Center" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Busy overlay while a map is loading -->
+                <Border IsVisible="{Binding IsBusy}" Background="#88000000">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12">
+                        <ProgressBar IsIndeterminate="True" Width="240" />
+                        <TextBlock Text="{Binding StatusMessage}" Foreground="White" HorizontalAlignment="Center" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Error panel -->
+                <Border IsVisible="{Binding HasError}" Background="#CC1A1A1A">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
+                                MaxWidth="760" Spacing="8">
+                        <TextBlock Text="Engine bootstrap failed" FontSize="18" FontWeight="Bold" />
+                        <ScrollViewer MaxHeight="400">
+                            <TextBlock Text="{Binding ErrorMessage}" TextWrapping="Wrap"
+                                       FontFamily="Consolas,Menlo,monospace" FontSize="12" Opacity="0.8" />
+                        </ScrollViewer>
+                    </StackPanel>
+                </Border>
+
+                <!-- Controls hint -->
+                <Border IsVisible="{Binding IsReady}"
+                        HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                        Margin="12" Padding="10,6"
+                        Background="#A01A1A1A" CornerRadius="4">
+                    <TextBlock Text="Middle-drag or Ctrl+drag to pan · Wheel to zoom · Left-click paints tile / places entity"
+                               FontSize="11" Opacity="0.7" />
+                </Border>
+            </Grid>
+
+            <!-- Splitter -->
+            <GridSplitter Grid.Column="1" Width="4" Background="#20FFFFFF" />
+
+            <!-- Palette panel: tile + entity palettes under a tab control -->
+            <Border Grid.Column="2"
+                    Background="#1F1F1F"
+                    BorderBrush="#30FFFFFF"
+                    BorderThickness="1,0,0,0">
+                <TabControl x:Name="PaletteTabs">
+
+                    <!-- Tiles -->
+                    <TabItem Header="Tiles" FontSize="14">
+                        <Grid RowDefinitions="Auto,*">
+                            <StackPanel Grid.Row="0" Margin="8" Spacing="4">
+                                <TextBlock Text="Select a tile, then left-click the canvas to paint."
+                                           FontSize="10" Opacity="0.5" TextWrapping="Wrap" />
+                                <TextBlock FontSize="10" Opacity="0.6">
+                                    <Run Text="Selected:" />
+                                    <Run Text="{Binding SelectedTile.Name, FallbackValue=(none)}" FontWeight="SemiBold" />
+                                </TextBlock>
+                            </StackPanel>
+                            <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled">
+                                <ItemsControl ItemsSource="{Binding TilePalette}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Vertical" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate DataType="vm:TilePaletteItem">
+                                            <Button Classes="tile-palette-entry"
+                                                    Classes.selected="{Binding IsSelected}"
+                                                    Click="OnTileEntryClicked"
+                                                    Tag="{Binding}"
+                                                    HorizontalAlignment="Stretch">
+                                                <Grid ColumnDefinitions="40,*">
+                                                    <Border Grid.Column="0" Width="36" Height="36"
+                                                            Background="#111"
+                                                            BorderBrush="#40FFFFFF" BorderThickness="1">
+                                                        <Grid>
+                                                            <Image Source="{Binding Thumbnail}"
+                                                                   Width="32" Height="32"
+                                                                   Stretch="None"
+                                                                   RenderOptions.BitmapInterpolationMode="None" />
+                                                            <TextBlock Text="∅"
+                                                                       IsVisible="{Binding IsEmpty}"
+                                                                       Foreground="#888"
+                                                                       FontSize="20"
+                                                                       HorizontalAlignment="Center"
+                                                                       VerticalAlignment="Center" />
+                                                        </Grid>
+                                                    </Border>
+                                                    <StackPanel Grid.Column="1" Margin="6,0,0,0" VerticalAlignment="Center">
+                                                        <TextBlock Text="{Binding Name}" FontSize="12" />
+                                                        <TextBlock Text="{Binding Id}" FontSize="9" Opacity="0.5" />
+                                                    </StackPanel>
+                                                </Grid>
+                                            </Button>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </Grid>
+                    </TabItem>
+
+                    <!-- Entities -->
+                    <TabItem Header="Entities" FontSize="14">
+                        <Grid RowDefinitions="Auto,*">
+                            <StackPanel Grid.Row="0" Margin="8" Spacing="4">
+                                <TextBlock Text="Select a prototype, then left-click the canvas to place."
+                                           FontSize="10" Opacity="0.5" TextWrapping="Wrap" />
+                                <TextBox Text="{Binding EntitySearchQuery, Mode=TwoWay}"
+                                         Watermark="Filter by name or ID..."
+                                         FontSize="11" />
+                                <TextBlock FontSize="10" Opacity="0.6">
+                                    <Run Text="Selected:" />
+                                    <Run Text="{Binding SelectedEntity.Name, FallbackValue=(none)}" FontWeight="SemiBold" />
+                                </TextBlock>
+                            </StackPanel>
+                            <!-- ListBox (not ItemsControl) so VirtualizingStackPanel only realizes
+                                 on-screen rows; the full catalog is ~thousands of entries. Toggle
+                                 selection lets re-clicking the active prototype clear it, matching
+                                 the tile palette's exit-paint-mode affordance. -->
+                            <ListBox Grid.Row="1"
+                                     ItemsSource="{Binding EntityPalette}"
+                                     SelectedItem="{Binding SelectedEntity, Mode=TwoWay}"
+                                     SelectionMode="Single,Toggle"
+                                     Background="Transparent"
+                                     BorderThickness="0"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate DataType="vm:EntityPaletteItem">
+                                        <Grid ColumnDefinitions="40,*">
+                                            <Border Grid.Column="0" Width="36" Height="36"
+                                                    Background="#111"
+                                                    BorderBrush="#40FFFFFF" BorderThickness="1">
+                                                <Grid>
+                                                    <Image Source="{Binding Thumbnail}"
+                                                           Width="32" Height="32"
+                                                           Stretch="None"
+                                                           RenderOptions.BitmapInterpolationMode="None" />
+                                                    <TextBlock Text="?"
+                                                               IsVisible="{Binding Thumbnail, Converter={x:Static ObjectConverters.IsNull}}"
+                                                               Foreground="#888"
+                                                               FontSize="18"
+                                                               HorizontalAlignment="Center"
+                                                               VerticalAlignment="Center" />
+                                                </Grid>
+                                            </Border>
+                                            <StackPanel Grid.Column="1" Margin="6,0,0,0" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Name}" FontSize="12" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Text="{Binding Subtitle}" FontSize="9" Opacity="0.5"
+                                                           TextTrimming="CharacterEllipsis" />
+                                            </StackPanel>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                                <ListBox.Styles>
+                                    <!-- Compact rows + single fixed-height panel helps the virtualizer skip layout -->
+                                    <Style Selector="ListBoxItem">
+                                        <Setter Property="Padding" Value="4,2" />
+                                        <Setter Property="MinHeight" Value="42" />
+                                    </Style>
+                                </ListBox.Styles>
+                            </ListBox>
+                        </Grid>
+                    </TabItem>
+
+                    <!-- Inspector: read-only view of whatever entity the user selected
+                         via right-click → menu on the canvas. Auto-activated by
+                         MainWindow.axaml.cs when SelectedMapEntity changes. -->
+                    <TabItem Header="Inspector" FontSize="14">
+                        <Grid>
+                            <!-- Placeholder while nothing is selected. -->
+                            <TextBlock Text="Right-click an entity on the map to inspect it."
+                                       FontSize="11" Opacity="0.5" TextWrapping="Wrap"
+                                       Margin="8" VerticalAlignment="Top"
+                                       IsVisible="{Binding SelectedMapEntity, Converter={x:Static ObjectConverters.IsNull}}" />
+
+                            <!-- Detail view. -->
+                            <Grid RowDefinitions="Auto,*"
+                                  IsVisible="{Binding SelectedMapEntity, Converter={x:Static ObjectConverters.IsNotNull}}">
+                                <StackPanel Grid.Row="0" Margin="8" Spacing="4">
+                                    <TextBlock Text="{Binding SelectedMapEntity.Name}"
+                                               FontSize="13" FontWeight="SemiBold"
+                                               TextTrimming="CharacterEllipsis" />
+                                    <TextBlock Text="{Binding SelectedMapEntity.PrototypeId}"
+                                               FontSize="10" Opacity="0.6"
+                                               TextTrimming="CharacterEllipsis" />
+                                    <Border Height="1" Background="#30FFFFFF" Margin="0,4" />
+                                    <Grid ColumnDefinitions="60,*" RowDefinitions="Auto,Auto,Auto">
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="UID"
+                                                   FontSize="10" Opacity="0.5" Margin="0,0,0,2" />
+                                        <TextBlock Grid.Row="0" Grid.Column="1"
+                                                   Text="{Binding SelectedMapEntity.Uid}"
+                                                   FontSize="10" FontFamily="Consolas,Menlo,monospace"
+                                                   Margin="0,0,0,2" />
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Local"
+                                                   FontSize="10" Opacity="0.5" Margin="0,0,0,2" />
+                                        <TextBlock Grid.Row="1" Grid.Column="1"
+                                                   Text="{Binding SelectedMapEntity.LocalCoords}"
+                                                   FontSize="10" FontFamily="Consolas,Menlo,monospace"
+                                                   Margin="0,0,0,2" />
+                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Grid"
+                                                   FontSize="10" Opacity="0.5" />
+                                        <TextBlock Grid.Row="2" Grid.Column="1"
+                                                   Text="{Binding SelectedMapEntity.ParentGridUid}"
+                                                   FontSize="10" FontFamily="Consolas,Menlo,monospace" />
+                                    </Grid>
+                                    <Border Height="1" Background="#30FFFFFF" Margin="0,4" />
+                                    <Button Content="Delete Entity"
+                                            Command="{Binding DeleteSelectedEntityCommand}"
+                                            HorizontalAlignment="Stretch"
+                                            HorizontalContentAlignment="Center"
+                                            Background="#802A1111"
+                                            BorderBrush="#FFA04040"
+                                            Foreground="#FFEECCCC"
+                                            Margin="0,2" />
+                                    <Border Height="1" Background="#30FFFFFF" Margin="0,4" />
+                                    <TextBlock Text="Components" FontSize="10" Opacity="0.5" />
+                                </StackPanel>
+                                <ScrollViewer Grid.Row="1" Padding="8,0,8,8">
+                                    <ItemsControl ItemsSource="{Binding SelectedMapEntity.ComponentNames}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding}"
+                                                           FontSize="10"
+                                                           FontFamily="Consolas,Menlo,monospace"
+                                                           Opacity="0.85" />
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </ScrollViewer>
+                            </Grid>
+                        </Grid>
+                    </TabItem>
+
+                </TabControl>
+            </Border>
+        </Grid>
+
+        <!-- Status bar -->
+        <Border Grid.Row="2" Padding="12,4" Background="{DynamicResource SystemControlBackgroundChromeLowBrush}">
+            <TextBlock Text="{Binding StatusMessage}" Opacity="0.75" />
+        </Border>
+    </Grid>
+</Window>
