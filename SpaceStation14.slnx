@@ -32,6 +32,7 @@
     <BuildType Solution="DebugOpt|*" Project="Debug" />
     <BuildType Solution="Tools|*" Project="Debug" />
   </Project>
+  <Project Path="Content.PrototypeEditor/Content.PrototypeEditor.csproj" />
   <Project Path="Content.Replay/Content.Replay.csproj" />
   <Project Path="Content.Server.Database/Content.Server.Database.csproj" />
   <Project Path="Content.Server/Content.Server.csproj" />
