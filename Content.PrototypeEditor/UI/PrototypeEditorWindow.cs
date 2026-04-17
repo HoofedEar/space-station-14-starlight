@@ -3,12 +3,14 @@ using System.Numerics;
 using Content.PrototypeEditor.FieldEditors;
 using Content.PrototypeEditor.Reflection;
 using Content.Shared.Damage;
+using Robust.Client.GameObjects;
 using Robust.Client.Graphics;
 using Robust.Client.UserInterface;
 using Robust.Client.UserInterface.Controls;
 using Robust.Client.UserInterface.CustomControls;
 using Robust.Shared.Audio;
 using Robust.Shared.GameObjects;
+using Robust.Shared.Log;
 using Robust.Shared.Maths;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization.Manager;
@@ -29,6 +31,10 @@ public sealed class PrototypeEditorWindow : DefaultWindow
     [Dependency] private readonly IPrototypeManager _protos = default!;
     [Dependency] private readonly ISerializationManager _serMan = default!;
     [Dependency] private readonly IComponentFactory _compFactory = default!;
+    [Dependency] private readonly IEntityManager _entMan = default!;
+    [Dependency] private readonly ILogManager _logMan = default!;
+
+    private readonly ISawmill _sawmill;
 
     private readonly OptionButton _kindDropdown;
     private readonly LineEdit _searchBar;
@@ -36,6 +42,9 @@ public sealed class PrototypeEditorWindow : DefaultWindow
     private readonly Label _detailHeader;
     private readonly BoxContainer _componentsList;
     private readonly Label _yamlBody;
+    private readonly BoxContainer _inheritanceList;
+    private readonly EntityPrototypeView _preview;
+    private readonly Label _previewCaption;
 
     private readonly List<string> _kinds = new();
     private List<IPrototype> _currentKindEntries = new();
@@ -43,10 +52,12 @@ public sealed class PrototypeEditorWindow : DefaultWindow
     private IPrototype? _selectedProto;
 
     private readonly FieldEditorRegistry _fieldEditors;
+    private readonly SpriteLayerListFieldEditor _spriteLayerEditor;
 
     public PrototypeEditorWindow()
     {
         IoCManager.InjectDependencies(this);
+        _sawmill = _logMan.GetSawmill("proto-editor");
 
         _fieldEditors = new FieldEditorRegistry(new RawYamlFieldEditor());
         _fieldEditors.RegisterExact<string>(new StringFieldEditor());
@@ -62,6 +73,10 @@ public sealed class PrototypeEditorWindow : DefaultWindow
         _fieldEditors.RegisterAssignable<Enum>(new EnumFieldEditor(_serMan));
         _fieldEditors.RegisterPredicate(ProtoIdFieldEditor.IsProtoId, new ProtoIdFieldEditor(_protos, _compFactory));
         _fieldEditors.RegisterPredicate(DictionaryFieldEditor.IsDictionary, new DictionaryFieldEditor(_fieldEditors));
+        // Sprite layers must match before the generic list editor; that one assumes
+        // scalar element types and would dump raw YAML for each layer otherwise.
+        _spriteLayerEditor = new SpriteLayerListFieldEditor(_fieldEditors, _entMan, _sawmill);
+        _fieldEditors.RegisterPredicate(SpriteLayerListFieldEditor.Matches, _spriteLayerEditor);
         _fieldEditors.RegisterPredicate(ListFieldEditor.IsList, new ListFieldEditor(_fieldEditors));
 
         Title = "Prototype Editor";
@@ -82,7 +97,7 @@ public sealed class PrototypeEditorWindow : DefaultWindow
 
         root.AddChild(BuildLeftPane(out _kindDropdown, out _searchBar, out _prototypeList));
         root.AddChild(BuildCenterPane(out _detailHeader, out _componentsList, out _yamlBody));
-        root.AddChild(BuildRightPane());
+        root.AddChild(BuildRightPane(_entMan, out _inheritanceList, out _preview, out _previewCaption));
 
         Contents.AddChild(root);
 
@@ -188,16 +203,81 @@ public sealed class PrototypeEditorWindow : DefaultWindow
         return pane;
     }
 
-    private static Control BuildRightPane()
+    private static Control BuildRightPane(
+        IEntityManager entMan,
+        out BoxContainer inheritanceList,
+        out EntityPrototypeView preview,
+        out Label previewCaption)
     {
         var pane = new BoxContainer
         {
             Orientation = BoxContainer.LayoutOrientation.Vertical,
             MinWidth = 260,
             SeparationOverride = 4,
+            VerticalExpand = true,
         };
-        pane.AddChild(new Label { Text = "Inheritance / Preview" });
-        pane.AddChild(new Label { Text = "(todo)" });
+
+        pane.AddChild(new Label
+        {
+            Text = "Preview",
+            StyleClasses = { "LabelHeading" },
+        });
+
+        // Fixed-size framed preview — keeps layout stable when switching between
+        // entities with very different sprite footprints.
+        preview = new EntityPrototypeView(null, entMan)
+        {
+            MinSize = new Vector2(128, 128),
+            SetSize = new Vector2(128, 128),
+            Stretch = SpriteView.StretchMode.Fit,
+            HorizontalAlignment = HAlignment.Center,
+        };
+        var previewFrame = new PanelContainer
+        {
+            HorizontalAlignment = HAlignment.Center,
+            PanelOverride = new StyleBoxFlat
+            {
+                BackgroundColor = Color.FromHex("#1f1f1f"),
+                BorderColor = Color.FromHex("#1a1a1a"),
+                BorderThickness = new Thickness(1),
+                ContentMarginLeftOverride = 6,
+                ContentMarginRightOverride = 6,
+                ContentMarginTopOverride = 6,
+                ContentMarginBottomOverride = 6,
+            },
+        };
+        previewFrame.AddChild(preview);
+        pane.AddChild(previewFrame);
+
+        previewCaption = new Label
+        {
+            Modulate = Color.Gray,
+            HorizontalAlignment = HAlignment.Center,
+            Text = string.Empty,
+        };
+        pane.AddChild(previewCaption);
+
+        pane.AddChild(new Label
+        {
+            Text = "Inheritance",
+            StyleClasses = { "LabelHeading" },
+        });
+
+        inheritanceList = new BoxContainer
+        {
+            Orientation = BoxContainer.LayoutOrientation.Vertical,
+            SeparationOverride = 1,
+            HorizontalExpand = true,
+        };
+        var scroll = new ScrollContainer
+        {
+            HorizontalExpand = true,
+            VerticalExpand = true,
+            HScrollEnabled = false,
+        };
+        scroll.AddChild(inheritanceList);
+        pane.AddChild(scroll);
+
         return pane;
     }
 
@@ -287,6 +367,115 @@ public sealed class PrototypeEditorWindow : DefaultWindow
 
         RenderComponents(proto);
         RenderYaml(proto);
+        RenderInheritance(proto);
+        RenderPreview(proto);
+    }
+
+    private void RenderPreview(IPrototype proto)
+    {
+        // Abstract prototypes can't be spawned; non-entity prototypes have
+        // nothing sprite-shaped to show. Either way we clear to avoid keeping
+        // a stale sprite on-screen.
+        if (proto is not EntityPrototype entity || entity.Abstract)
+        {
+            TryClearPreview();
+            _previewCaption.Text = proto is EntityPrototype { Abstract: true }
+                ? "(abstract — not spawnable)"
+                : "(no preview)";
+            return;
+        }
+
+        try
+        {
+            _preview.SetPrototype(entity.ID);
+            _previewCaption.Text = string.Empty;
+            _previewCaption.ToolTip = null;
+        }
+        catch (Exception ex)
+        {
+            // Full stack goes to the log — the caption only has room for a
+            // short hint, but hovering shows the first stack frame so the
+            // user can sanity-check without opening the log file.
+            _sawmill.Error($"Preview failed for prototype '{entity.ID}': {ex}");
+            TryClearPreview();
+            _previewCaption.Text = $"(preview failed: {ex.GetType().Name})";
+            _previewCaption.ToolTip = $"{ex.GetType().FullName}: {ex.Message}\n\n{FirstFrame(ex)}";
+        }
+    }
+
+    private static string FirstFrame(Exception ex)
+    {
+        var stack = ex.StackTrace;
+        if (string.IsNullOrEmpty(stack)) return "(no stack)";
+        var nl = stack.IndexOf('\n');
+        return nl < 0 ? stack : stack[..nl].TrimEnd('\r');
+    }
+
+    private void TryClearPreview()
+    {
+        // SetPrototype(null) itself can throw if the view is in a bad state
+        // (e.g. a prior spawn only half-succeeded). Swallow so that an error
+        // on one prototype doesn't also break switching to the next one.
+        try { _preview.SetPrototype(null); }
+        catch (Exception ex) { _sawmill.Warning($"Clearing preview failed: {ex.Message}"); }
+    }
+
+    private void RenderInheritance(IPrototype proto)
+    {
+        _inheritanceList.DisposeAllChildren();
+
+        if (proto is not IInheritingPrototype)
+        {
+            _inheritanceList.AddChild(new Label
+            {
+                Text = "(no inheritance)",
+                Modulate = Color.Gray,
+                HorizontalAlignment = HAlignment.Center,
+                Margin = new Thickness(0, 8),
+            });
+            return;
+        }
+
+        // DFS walks depth-first through multi-inheritance; `seen` prevents
+        // diamond-shape duplicates (e.g. two parents sharing an ancestor).
+        var chain = new List<(int Depth, IPrototype Proto)>();
+        var seen = new HashSet<string>();
+        var kind = proto.GetType();
+
+        void Walk(IPrototype p, int depth)
+        {
+            if (!seen.Add(p.ID))
+                return;
+            chain.Add((depth, p));
+            if (p is not IInheritingPrototype { Parents: { } parents })
+                return;
+            foreach (var parentId in parents)
+            {
+                if (_protos.TryIndex(kind, parentId, out var parentProto))
+                    Walk(parentProto, depth + 1);
+            }
+        }
+
+        Walk(proto, 0);
+
+        for (var i = 0; i < chain.Count; i++)
+        {
+            var (depth, p) = chain[i];
+            var captured = p;
+            var isSelf = i == 0;
+            var btn = new Button
+            {
+                Text = new string(' ', depth * 2) + (isSelf ? "● " : "↑ ") + p.ID,
+                HorizontalAlignment = HAlignment.Stretch,
+                ClipText = true,
+                Disabled = isSelf,
+                StyleClasses = { "monospace" },
+                ToolTip = isSelf ? "Currently selected" : "Jump to this ancestor",
+            };
+            if (!isSelf)
+                btn.OnPressed += _ => Select(captured);
+            _inheritanceList.AddChild(btn);
+        }
     }
 
     private void RenderComponents(IPrototype proto)
@@ -336,24 +525,50 @@ public sealed class PrototypeEditorWindow : DefaultWindow
             Margin = new Thickness(8, 4, 4, 4),
         };
 
-        var fieldCount = 0;
-        foreach (var field in ComponentDataFieldReader.GetFields(component))
+        // For a SpriteComponent, tell the layer editor how to read the live
+        // top-level `sprite:` so state-only layers can resolve a thumbnail.
+        // Scope-bound: only this component's field builds see the resolver.
+        IDisposable? spriteScope = null;
+        if (component is SpriteComponent)
         {
-            rows.AddChild(BuildFieldRow(field, mapping, parentMapping, fieldCount));
-            fieldCount++;
+            spriteScope = _spriteLayerEditor.UseComponentRsiResolver(() =>
+                ReadSpriteRsi(mapping) ?? ReadSpriteRsi(parentMapping));
         }
 
-        if (fieldCount == 0)
+        try
         {
-            rows.AddChild(new Label
+            var fieldCount = 0;
+            foreach (var field in ComponentDataFieldReader.GetFields(component))
             {
-                Text = "(no data fields)",
-                Modulate = Color.Gray,
-            });
+                rows.AddChild(BuildFieldRow(field, mapping, parentMapping, fieldCount));
+                fieldCount++;
+            }
+
+            if (fieldCount == 0)
+            {
+                rows.AddChild(new Label
+                {
+                    Text = "(no data fields)",
+                    Modulate = Color.Gray,
+                });
+            }
+        }
+        finally
+        {
+            spriteScope?.Dispose();
         }
 
         body.AddChild(rows);
         return body;
+    }
+
+    private static string? ReadSpriteRsi(MappingDataNode? mapping)
+    {
+        if (mapping == null)
+            return null;
+        return mapping.TryGet("sprite", out var node) && node is ValueDataNode v && !string.IsNullOrEmpty(v.Value)
+            ? v.Value
+            : null;
     }
 
     // Inheritance state for a single field. Expanded from 2-state to 3-state later
