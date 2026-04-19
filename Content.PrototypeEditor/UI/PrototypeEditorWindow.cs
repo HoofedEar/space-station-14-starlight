@@ -53,6 +53,7 @@ public sealed class PrototypeEditorWindow : DefaultWindow
 
     private readonly FieldEditorRegistry _fieldEditors;
     private readonly SpriteLayerListFieldEditor _spriteLayerEditor;
+    private readonly ComponentDocResolver _docs = new();
 
     public PrototypeEditorWindow()
     {
@@ -172,7 +173,7 @@ public sealed class PrototypeEditorWindow : DefaultWindow
         componentsList = new BoxContainer
         {
             Orientation = BoxContainer.LayoutOrientation.Vertical,
-            SeparationOverride = 2,
+            SeparationOverride = 6,
             HorizontalExpand = true,
         };
         var componentsScroll = new ScrollContainer
@@ -497,11 +498,12 @@ public sealed class PrototypeEditorWindow : DefaultWindow
         {
             var parentMapping = BuildParentComponentMapping(entity, name);
             var body = BuildComponentBody(entry.Component, entry.Mapping, parentMapping);
-            var collapsible = new Collapsible(name, body)
+            var heading = BuildComponentHeading(name);
+            var collapsible = new Collapsible(heading, body)
             {
                 HorizontalExpand = true,
             };
-            _componentsList.AddChild(collapsible);
+            _componentsList.AddChild(WrapComponentCard(collapsible));
         }
 
         if (entity.Components.Count == 0)
@@ -514,6 +516,76 @@ public sealed class PrototypeEditorWindow : DefaultWindow
         }
     }
 
+    private static readonly Color ComponentCardBorder = Color.FromHex("#4a4a4a");
+    private static readonly Color SummaryTextColor = Color.FromHex("#a8a8a8");
+    private static readonly Color SummaryStripeColor = Color.FromHex("#6fa8dc");
+
+    // Renders the XML doc <summary> as a soft-colored, wrapped paragraph
+    // inside a thin left-stripe panel. The stripe doubles as a visual cue
+    // that this row is metadata and not an editable field.
+    private static Control BuildSummaryLabel(string summary)
+    {
+        var label = new RichTextLabel
+        {
+            HorizontalExpand = true,
+            Margin = new Thickness(0, 0, 0, 6),
+        };
+        label.SetMessage(summary, SummaryTextColor);
+
+        var panel = new PanelContainer
+        {
+            HorizontalExpand = true,
+            PanelOverride = new StyleBoxFlat
+            {
+                BackgroundColor = Color.Transparent,
+                BorderColor = SummaryStripeColor,
+                BorderThickness = new Thickness(2, 0, 0, 0),
+                ContentMarginLeftOverride = 8,
+                ContentMarginRightOverride = 4,
+                ContentMarginTopOverride = 2,
+                ContentMarginBottomOverride = 2,
+            },
+            Margin = new Thickness(0, 0, 0, 4),
+        };
+        panel.AddChild(label);
+        return panel;
+    }
+
+    // A thin panel around each collapsible so neighboring components don't blur
+    // together — especially when multiple are expanded at once.
+    private static Control WrapComponentCard(Control collapsible)
+    {
+        var panel = new PanelContainer
+        {
+            HorizontalExpand = true,
+            PanelOverride = new StyleBoxFlat
+            {
+                BackgroundColor = Color.Transparent,
+                BorderColor = ComponentCardBorder,
+                BorderThickness = new Thickness(1),
+            },
+        };
+        panel.AddChild(collapsible);
+        return panel;
+    }
+
+    // The stock CollapsibleHeading only sizes to its text, so a short component
+    // name like "Transform" gives a tiny click target. Stretch the whole heading
+    // across the pane and center the label in the space left of the chevron so
+    // it reads as the header for everything below it.
+    private static CollapsibleHeading BuildComponentHeading(string name)
+    {
+        var heading = new CollapsibleHeading(name)
+        {
+            HorizontalExpand = true,
+        };
+        heading.Label.HorizontalExpand = true;
+        heading.Label.Align = Label.AlignMode.Center;
+        if (heading.Label.Parent is BoxContainer inner)
+            inner.HorizontalExpand = true;
+        return heading;
+    }
+
     private CollapsibleBody BuildComponentBody(object component, MappingDataNode mapping, MappingDataNode? parentMapping)
     {
         var body = new CollapsibleBody { HorizontalExpand = true };
@@ -524,6 +596,10 @@ public sealed class PrototypeEditorWindow : DefaultWindow
             HorizontalExpand = true,
             Margin = new Thickness(8, 4, 4, 4),
         };
+
+        var summary = _docs.GetSummary(component.GetType());
+        if (!string.IsNullOrEmpty(summary))
+            rows.AddChild(BuildSummaryLabel(summary));
 
         // For a SpriteComponent, tell the layer editor how to read the live
         // top-level `sprite:` so state-only layers can resolve a thumbnail.
