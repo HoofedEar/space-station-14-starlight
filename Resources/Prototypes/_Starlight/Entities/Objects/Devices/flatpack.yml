@@ -143,3 +143,12 @@
     - state: large
   - type: Flatpack
     entity: GasTurbineSmallEmpty
+
+- type: entity
+  parent: BaseFlatpack
+  id: PortableHealerFlatpack
+  name: portable healer flatpack
+  description: A flatpack used for constructing a portable healer.
+  components:
+  - type: Flatpack
+    entity: PortableHealer

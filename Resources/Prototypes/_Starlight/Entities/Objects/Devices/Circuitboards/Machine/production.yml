@@ -1241,3 +1241,18 @@
       PowerCell:
         amount: 4
         defaultPrototype: PowerCellHigh
+
+- type: entity
+  id: PortableHealerMachineCircuitboard
+  parent: BaseMachineCircuitboard
+  name: portable healer machine board
+  description: A machine printed circuit board for a portable healer.
+  components:
+    - type: Sprite
+      state: medical
+    - type: MachineBoard
+      prototype: PortableHealer
+      stackRequirements:
+        Manipulator: 1
+        Glass: 2
+        Cable: 2

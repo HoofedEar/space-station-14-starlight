@@ -178,6 +178,7 @@
   recipeUnlocks:
   - BorgModuleAdvancedTopical
   - AdvancedJetInjector
+  - PortableHealerMachineCircuitboard
 
 - type: technology
   id: MedicalCyberLimbsTech
