@@ -1,0 +1,20 @@
+- type: gameMap
+  id: ContinentalDropship
+  mapName: 'NT-Reclaimer'
+  mapPath: /Maps/_Starlight/Shuttles/mining_new.yml
+  isGrid: true
+  minPlayers: 0
+  maxPlayers: 10
+  stations:
+    ContinentalDropship:
+      stationProto: TestStation
+      components:
+        - type: StationNameSetup
+          mapNameTemplate: 'NT-Reclaimer'
+        - type: StationBiome
+          biome: Continental
+        - type: StationDropshipPlanet
+        - type: StationEmergencyShuttle
+        - type: StationJobs
+          availableJobs:
+            SalvageSpecialist: [ -1, 10 ]
