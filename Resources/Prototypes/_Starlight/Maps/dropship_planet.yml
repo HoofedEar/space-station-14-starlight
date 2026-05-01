@@ -13,6 +13,7 @@
           mapNameTemplate: 'NT-Reclaimer'
         - type: StationBiome
           biome: Continental
+          mapLightColor: "#D8B059"
         - type: StationDropshipPlanet
           oreMarkers:
             - OreIron

@@ -51,6 +51,8 @@ public sealed class StationDropshipPlanetSystem : EntitySystem
 
         if (!TryComp<MapGridComponent>(mapUid, out var mapGrid))
             return;
+        if (!TryComp<MapGridComponent>(gridUid, out var dropshipGrid))
+            return;
         if (!TryComp<BiomeComponent>(mapUid, out var biome))
             return;
 
@@ -59,6 +61,9 @@ public sealed class StationDropshipPlanetSystem : EntitySystem
         {
             landing = found;
             _transform.SetCoordinates(gridUid, new EntityCoordinates(mapUid, landing));
+            // mining_new.yml is authored at a non-zero angle; snap to cardinal so the
+            // ship sits axis-aligned on the planet instead of skewed diagonally.
+            _transform.SetLocalRotation(gridUid, Angle.Zero);
         }
         else
         {
@@ -69,7 +74,14 @@ public sealed class StationDropshipPlanetSystem : EntitySystem
         AddMarkers(mapUid, biome, ent.Comp.OreMarkers);
         AddMarkers(mapUid, biome, ent.Comp.MobMarkers);
         ent.Comp.PlanetMap = mapUid;
-        ScatterDungeons((mapUid, mapGrid), landing, ent.Comp);
+
+        // Half-diagonal of the dropship AABB is the worst-case overlap radius for a
+        // dungeon center placed in any direction. Floor every dungeon offset at this.
+        var aabb = dropshipGrid.LocalAABB;
+        var dropshipRadius = MathF.Sqrt(aabb.Width * aabb.Width + aabb.Height * aabb.Height) * 0.5f;
+        var minDungeonDistance = dropshipRadius + ent.Comp.DungeonClearance;
+
+        ScatterDungeons((mapUid, mapGrid), landing, ent.Comp, minDungeonDistance);
     }
 
     private void OnPlayerSpawn(PlayerSpawnCompleteEvent args)
@@ -112,7 +124,8 @@ public sealed class StationDropshipPlanetSystem : EntitySystem
     private void ScatterDungeons(
         Entity<MapGridComponent> map,
         Vector2 origin,
-        StationDropshipPlanetComponent comp)
+        StationDropshipPlanetComponent comp,
+        float minDistance)
     {
         if (comp.DungeonConfigs.Count == 0)
             return;
@@ -135,6 +148,9 @@ public sealed class StationDropshipPlanetSystem : EntitySystem
             var (offMin, offMax) = isLandingSite
                 ? (comp.LandingSiteOffsetMin, comp.LandingSiteOffsetMax)
                 : (comp.DungeonOffsetMin, comp.DungeonOffsetMax);
+
+            offMin = MathF.Max(offMin, minDistance);
+            offMax = MathF.Max(offMax, offMin + 1f);
 
             var angle = isLandingSite ? landingAngle : _random.NextAngle();
             var distance = _random.NextFloat(offMin, offMax);

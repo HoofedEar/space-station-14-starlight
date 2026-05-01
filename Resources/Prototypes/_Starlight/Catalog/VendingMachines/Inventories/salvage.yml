@@ -10,8 +10,18 @@
     - !type:BuyerAccessCondition
 
 - type: listing
-  id: VendorSalvageGrapplingGun
-  productEntity: WeaponGrapplingGun
+  id: VendorSalvageHandHeldMassScanner
+  productEntity: HandHeldMassScanner
+  cost:
+    SalvageTicket: 35
+  categories:
+    - SalvageEquipment
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageFireHelmet
+  productEntity: ClothingHeadHelmetFire
   cost:
     SalvageTicket: 40
   categories:
@@ -200,7 +210,7 @@
   id: VendorSalvageWeaponRevolverZOZ
   productEntity: WeaponRevolverZOZ
   cost:
-    SalvageTicket: 300
+    SalvageTicket: 350
   categories:
   - SalvageWeapons
   conditions:
@@ -210,7 +220,7 @@
   id: VendorSalvageWeaponLr30
   productEntity: WeaponLr30
   cost:
-    SalvageTicket: 300
+    SalvageTicket: 350
   categories:
   - SalvageWeapons
   conditions:
@@ -246,6 +256,16 @@
   - SalvageConsumeables
   conditions:
   - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageBoxMRE
+  productEntity: BoxMRE
+  cost:
+    SalvageTicket: 25
+  categories:
+    - SalvageConsumeables
+  conditions:
+    - !type:BuyerAccessCondition
 
 - type: listing
   id: VendorSalvageSpeedLoaderMagnumSP
@@ -358,35 +378,35 @@
   conditions:
     - !type:BuyerAccessCondition
 
-- type: listing
-  id: VendorSalvageClothingUniformJumpsuitSalvageMercWhite
-  productEntity: ClothingUniformJumpsuitSalvageMercWhite
-  cost:
-    SalvageTicket: 25
-  categories:
-  - SalvageMercenaryEquipment
-  conditions:
-  - !type:BuyerAccessCondition
+#- type: listing
+#  id: VendorSalvageClothingUniformJumpsuitSalvageMercWhite
+#  productEntity: ClothingUniformJumpsuitSalvageMercWhite
+#  cost:
+#    SalvageTicket: 25
+#  categories:
+#  - SalvageMercenaryEquipment
+#  conditions:
+#  - !type:BuyerAccessCondition
 
-- type: listing
-  id: VendorSalvageClothingUniformJumpsuitSalvageMercGreen
-  productEntity: ClothingUniformJumpsuitSalvageMercGreen
-  cost:
-    SalvageTicket: 25
-  categories:
-    - SalvageMercenaryEquipment
-  conditions:
-    - !type:BuyerAccessCondition
+#- type: listing
+#  id: VendorSalvageClothingUniformJumpsuitSalvageMercGreen
+#  productEntity: ClothingUniformJumpsuitSalvageMercGreen
+#  cost:
+#    SalvageTicket: 25
+#  categories:
+#    - SalvageMercenaryEquipment
+#  conditions:
+#    - !type:BuyerAccessCondition
 
-- type: listing
-  id: VendorSalvageClothingUniformJumpsuitSalvageMercBrown
-  productEntity: ClothingUniformJumpsuitSalvageMercBrown
-  cost:
-    SalvageTicket: 25
-  categories:
-    - SalvageMercenaryEquipment
-  conditions:
-    - !type:BuyerAccessCondition
+#- type: listing
+#  id: VendorSalvageClothingUniformJumpsuitSalvageMercBrown
+#  productEntity: ClothingUniformJumpsuitSalvageMercBrown
+#  cost:
+#    SalvageTicket: 25
+#  categories:
+#    - SalvageMercenaryEquipment
+#  conditions:
+#    - !type:BuyerAccessCondition
 
 - type: listing
   id: VendorSalvageClothingEyesGlassesSalvageMercenary
@@ -457,6 +477,42 @@
 #  - SalvageMercenaryEquipment
 #  conditions:
 #  - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvagePKAUpgradeDamage
+  productEntity: PKAUpgradeDamage
+  cost:
+    SalvageTicket: 300
+  categories:
+    - SalvageWeapons
+  conditions:
+    - !type:ListingLimitedStockCondition
+      stock: 5
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvagePKAUpgradeRange
+  productEntity: PKAUpgradeRange
+  cost:
+    SalvageTicket: 300
+  categories:
+    - SalvageWeapons
+  conditions:
+    - !type:ListingLimitedStockCondition
+      stock: 5
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvagePKAUpgradeFireRate
+  productEntity: PKAUpgradeFireRate
+  cost:
+    SalvageTicket: 300
+  categories:
+    - SalvageWeapons
+  conditions:
+    - !type:ListingLimitedStockCondition
+      stock: 5
+    - !type:BuyerAccessCondition
 
 
 #Cybernetics
