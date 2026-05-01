@@ -1,3 +1,4 @@
+using System.Numerics;
 using Content.Shared.Parallax.Biomes.Markers;
 using Content.Shared.Procedural;
 using Robust.Shared.Prototypes;
@@ -58,4 +59,22 @@ public sealed partial class StationDropshipPlanetComponent : Component
 
     [DataField]
     public float LandingSiteOffsetMax = 0f;
+
+    /// <summary>
+    /// Offset of the landing-site dungeon from the dropship, written by
+    /// <c>StationDropshipPlanetSystem</c> after world generation. Used to
+    /// announce the cardinal direction over comms once players spawn.
+    /// </summary>
+    [DataField]
+    public Vector2 LandingSiteDirection = Vector2.Zero;
+
+    /// <summary>
+    /// The planet map entity hosting the dropship; cached for the
+    /// player-spawn announcement filter.
+    /// </summary>
+    [DataField]
+    public EntityUid PlanetMap = EntityUid.Invalid;
+
+    [DataField]
+    public bool Announced;
 }

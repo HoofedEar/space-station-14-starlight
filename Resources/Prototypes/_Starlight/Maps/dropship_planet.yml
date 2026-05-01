@@ -35,8 +35,8 @@
           dungeonCountMax: 6
           dungeonOffsetMin: 60
           dungeonOffsetMax: 140
-          landingSiteOffsetMin: 25
-          landingSiteOffsetMax: 50
+          landingSiteOffsetMin: 28
+          landingSiteOffsetMax: 40
         - type: StationEmergencyShuttle
         - type: StationJobs
           availableJobs:

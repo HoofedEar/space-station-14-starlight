@@ -1,14 +1,19 @@
 using System.Numerics;
+using Content.Server.Chat.Managers;
 using Content.Server.Parallax;
 using Content.Server.Procedural;
 using Content.Server.Station.Events;
 using Content.Server.Station.Systems;
+using Content.Shared.Chat;
+using Content.Shared.GameTicking;
+using Content.Shared.Localizations;
 using Content.Shared.Maps;
 using Content.Shared.Parallax.Biomes;
 using Content.Shared.Parallax.Biomes.Markers;
 using Content.Shared.Procedural;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
+using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 
@@ -24,6 +29,7 @@ public sealed class StationDropshipPlanetSystem : EntitySystem
     [Dependency] private readonly ITileDefinitionManager _tileDefMan = default!;
     [Dependency] private readonly IPrototypeManager _proto = default!;
     [Dependency] private readonly IRobustRandom _random = default!;
+    [Dependency] private readonly IChatManager _chat = default!;
 
     public override void Initialize()
     {
@@ -31,6 +37,7 @@ public sealed class StationDropshipPlanetSystem : EntitySystem
         SubscribeLocalEvent<StationDropshipPlanetComponent, StationPostInitEvent>(
             OnPostInit,
             after: new[] { typeof(StationBiomeSystem) });
+        SubscribeLocalEvent<PlayerSpawnCompleteEvent>(OnPlayerSpawn);
     }
 
     private void OnPostInit(Entity<StationDropshipPlanetComponent> ent, ref StationPostInitEvent args)
@@ -61,7 +68,34 @@ public sealed class StationDropshipPlanetSystem : EntitySystem
 
         AddMarkers(mapUid, biome, ent.Comp.OreMarkers);
         AddMarkers(mapUid, biome, ent.Comp.MobMarkers);
+        ent.Comp.PlanetMap = mapUid;
         ScatterDungeons((mapUid, mapGrid), landing, ent.Comp);
+    }
+
+    private void OnPlayerSpawn(PlayerSpawnCompleteEvent args)
+    {
+        if (!TryComp<StationDropshipPlanetComponent>(args.Station, out var comp))
+            return;
+        if (comp.Announced)
+            return;
+        if (comp.LandingSiteDirection == Vector2.Zero)
+            return;
+        if (!TryComp<MapComponent>(comp.PlanetMap, out var mapComp))
+            return;
+
+        var dir = ContentLocalizationManager.FormatDirection(comp.LandingSiteDirection.GetDir()).ToLower();
+        var msg = Loc.GetString("continental-drop-announcement-dungeon", ("direction", dir));
+        _chat.ChatMessageToManyFiltered(
+            Filter.BroadcastMap(mapComp.MapId),
+            ChatChannel.Radio,
+            msg,
+            msg,
+            comp.PlanetMap,
+            false,
+            true,
+            null);
+
+        comp.Announced = true;
     }
 
     private void AddMarkers(
@@ -85,6 +119,9 @@ public sealed class StationDropshipPlanetSystem : EntitySystem
 
         var count = _random.Next(comp.DungeonCountMin, comp.DungeonCountMax + 1);
         var landingSiteEnabled = comp.LandingSiteOffsetMax > 0f;
+        // Cardinal direction for the landing-site dungeon (mirrors salvage's GetDungeonRotation)
+        // so players have a single seed-determined "walk this way" cue rather than searching every direction.
+        var landingAngle = new Angle(Math.PI / 2 * _random.Next(0, 4));
         for (var i = 0; i < count; i++)
         {
             var configId = _random.Pick(comp.DungeonConfigs);
@@ -94,18 +131,22 @@ public sealed class StationDropshipPlanetSystem : EntitySystem
                 continue;
             }
 
-            var (offMin, offMax) = (i == 0 && landingSiteEnabled)
+            var isLandingSite = i == 0 && landingSiteEnabled;
+            var (offMin, offMax) = isLandingSite
                 ? (comp.LandingSiteOffsetMin, comp.LandingSiteOffsetMax)
                 : (comp.DungeonOffsetMin, comp.DungeonOffsetMax);
 
-            var angle = _random.NextAngle();
+            var angle = isLandingSite ? landingAngle : _random.NextAngle();
             var distance = _random.NextFloat(offMin, offMax);
-            var pos = (Vector2i)(origin + angle.ToVec() * distance);
+            var offset = angle.ToVec() * distance;
+            var pos = (Vector2i)(origin + offset);
             var seed = _random.Next();
 
             try
             {
                 _dungeon.GenerateDungeon(config, map.Owner, map.Comp, pos, seed);
+                if (isLandingSite)
+                    comp.LandingSiteDirection = offset;
             }
             catch (Exception e)
             {
