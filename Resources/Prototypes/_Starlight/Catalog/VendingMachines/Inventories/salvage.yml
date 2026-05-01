@@ -1,14 +1,12 @@
 #equipment
 - type: listing
-  id: VendorSalvageBinoculars
-  productEntity: Binoculars
+  id: VendorSalvageOreBag
+  productEntity: OreBag
   cost:
-    SalvageTicket: 75
+    SalvageTicket: 25
   categories:
     - SalvageEquipment
   conditions:
-    - !type:ListingLimitedStockCondition
-      stock: 3
     - !type:BuyerAccessCondition
 
 - type: listing
@@ -24,6 +22,18 @@
   - !type:BuyerAccessCondition
 
 - type: listing
+  id: VendorSalvageBinoculars
+  productEntity: Binoculars
+  cost:
+    SalvageTicket: 75
+  categories:
+    - SalvageEquipment
+  conditions:
+    - !type:ListingLimitedStockCondition
+      stock: 3
+    - !type:BuyerAccessCondition
+
+- type: listing
   id: VendorSalvageGClothingMaskGasExplorer
   productEntity: ClothingMaskGasExplorer
   cost:
@@ -34,54 +44,30 @@
   - !type:BuyerAccessCondition
 
 - type: listing
-  id: VendorSalvageMechClarke
-  productEntity: MechClarke
+  id: VendorSalvageClothingOuterHardsuitSpatio
+  productEntity: ClothingOuterHardsuitSpatio
   cost:
-    SalvageTicket: 700
+    SalvageTicket: 100
   categories:
   - SalvageEquipment
   conditions:
-  - !type:ListingLimitedStockCondition
-    stock: 1
   - !type:BuyerAccessCondition
 
-- type: listing
-  id: VendorSalvageClothingOuterHardsuitMaxim
-  productEntity: ClothingOuterHardsuitMaxim
-  cost:
-    SalvageTicket: 1200
-  categories:
-  - SalvageEquipment
-  conditions:
-  - !type:ListingLimitedStockCondition
-    stock: 3
-  - !type:BuyerAccessCondition
+#- type: listing
+#  id: VendorSalvageExpeditionEncryptionKey
+#  productEntity: EncryptionKeyExpedition
+#  cost:
+#    SalvageTicket: 100
+#  categories:
+#  - SalvageEquipment
+#  conditions:
+#  - !type:BuyerAccessCondition
 
 - type: listing
   id: VendorSalvageClothingOuterHardsuitLuxury
   productEntity: ClothingOuterHardsuitLuxury
   cost:
     SalvageTicket: 150
-  categories:
-  - SalvageEquipment
-  conditions:
-  - !type:BuyerAccessCondition
-
-- type: listing
-  id: VendorSalvageClothingOuterHardsuitSalvage
-  productEntity: ClothingOuterHardsuitSalvage
-  cost:
-    SalvageTicket: 250
-  categories:
-  - SalvageEquipment
-  conditions:
-  - !type:BuyerAccessCondition
-
-- type: listing
-  id: VendorSalvageClothingOuterHardsuitSpatio
-  productEntity: ClothingOuterHardsuitSpatio
-  cost:
-    SalvageTicket: 100
   categories:
   - SalvageEquipment
   conditions:
@@ -100,15 +86,23 @@
   - !type:BuyerAccessCondition
 
 - type: listing
-  id: VendorSalvageMiningDrillDiamond
-  productEntity: MiningDrillDiamond
+  id: VendorSalvageClothingOuterHardsuitSalvage
+  productEntity: ClothingOuterHardsuitSalvage
   cost:
-    SalvageTicket: 400
+    SalvageTicket: 250
   categories:
   - SalvageEquipment
   conditions:
-  - !type:ListingLimitedStockCondition
-    stock: 1
+  - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageFloodlight
+  productEntity: Floodlight
+  cost:
+    SalvageTicket: 250
+  categories:
+  - SalvageEquipment
+  conditions:
   - !type:BuyerAccessCondition
 
 - type: listing
@@ -119,6 +113,18 @@
   categories:
   - SalvageEquipment
   conditions:
+  - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageMiningDrillDiamond
+  productEntity: MiningDrillDiamond
+  cost:
+    SalvageTicket: 400
+  categories:
+  - SalvageEquipment
+  conditions:
+  - !type:ListingLimitedStockCondition
+    stock: 1
   - !type:BuyerAccessCondition
 
 - type: listing
@@ -146,61 +152,35 @@
   - !type:BuyerAccessCondition
 
 - type: listing
-  id: VendorSalvageFloodlight
-  productEntity: Floodlight
+  id: VendorSalvageMechClarke
+  productEntity: MechClarke
   cost:
-    SalvageTicket: 250
+    SalvageTicket: 700
   categories:
   - SalvageEquipment
   conditions:
+  - !type:ListingLimitedStockCondition
+    stock: 1
   - !type:BuyerAccessCondition
 
 - type: listing
-  id: VendorSalvageOreBag
-  productEntity: OreBag
+  id: VendorSalvageClothingOuterHardsuitMaxim
+  productEntity: ClothingOuterHardsuitMaxim
   cost:
-    SalvageTicket: 25
+    SalvageTicket: 1200
   categories:
-    - SalvageEquipment
+  - SalvageEquipment
   conditions:
-    - !type:BuyerAccessCondition
-
-#- type: listing
-#  id: VendorSalvageExpeditionEncryptionKey
-#  productEntity: EncryptionKeyExpedition
-#  cost:
-#    SalvageTicket: 100
-#  categories:
-#  - SalvageEquipment
-#  conditions:
-#  - !type:BuyerAccessCondition
+  - !type:ListingLimitedStockCondition
+    stock: 3
+  - !type:BuyerAccessCondition
 
 #weapons
-- type: listing
-  id: VendorSalvageWeaponLaserImmolator
-  productEntity: WeaponLaserImmolator
-  cost:
-    SalvageTicket: 500
-  categories:
-  - SalvageWeapons
-  conditions:
-  - !type:BuyerAccessCondition
-
 - type: listing
   id: VendorSalvageWeaponShotgunGA12
   productEntity: WeaponShotgunGA12
   cost:
     SalvageTicket: 200
-  categories:
-  - SalvageWeapons
-  conditions:
-  - !type:BuyerAccessCondition
-
-- type: listing
-  id: VendorSalvageWeaponRevolverZOZ
-  productEntity: WeaponRevolverZOZ
-  cost:
-    SalvageTicket: 300
   categories:
   - SalvageWeapons
   conditions:
@@ -217,10 +197,10 @@
   - !type:BuyerAccessCondition
 
 - type: listing
-  id: VendorSalvageWeaponShotgunCycler
-  productEntity: WeaponShotgunCycler
+  id: VendorSalvageWeaponRevolverZOZ
+  productEntity: WeaponRevolverZOZ
   cost:
-    SalvageTicket: 500
+    SalvageTicket: 300
   categories:
   - SalvageWeapons
   conditions:
@@ -236,22 +216,32 @@
   conditions:
   - !type:BuyerAccessCondition
 
-#consumables
 - type: listing
-  id: VendorSalvageSpeedLoaderShotgunEmpty
-  productEntity: SpeedLoaderShotgunEmpty
+  id: VendorSalvageWeaponLaserImmolator
+  productEntity: WeaponLaserImmolator
   cost:
-    SalvageTicket: 100
+    SalvageTicket: 500
   categories:
-  - SalvageConsumeables
+  - SalvageWeapons
   conditions:
   - !type:BuyerAccessCondition
 
 - type: listing
-  id: VendorSalvageBoxLethalshot
-  productEntity: BoxLethalshot
+  id: VendorSalvageWeaponShotgunCycler
+  productEntity: WeaponShotgunCycler
   cost:
-    SalvageTicket: 200
+    SalvageTicket: 500
+  categories:
+  - SalvageWeapons
+  conditions:
+  - !type:BuyerAccessCondition
+
+#consumables
+- type: listing
+  id: VendorSalvageBoxFlare
+  productEntity: BoxFlare
+  cost:
+    SalvageTicket: 15
   categories:
   - SalvageConsumeables
   conditions:
@@ -278,8 +268,8 @@
   - !type:BuyerAccessCondition
 
 - type: listing
-  id: VendorSalvageMagazineBatteryLr30
-  productEntity: MagazineBatteryLr30
+  id: VendorSalvageSpeedLoaderShotgunEmpty
+  productEntity: SpeedLoaderShotgunEmpty
   cost:
     SalvageTicket: 100
   categories:
@@ -288,10 +278,10 @@
   - !type:BuyerAccessCondition
 
 - type: listing
-  id: VendorSalvageMedkitAdvancedFilled
-  productEntity: MedkitAdvancedFilled
+  id: VendorSalvageMagazineBatteryLr30
+  productEntity: MagazineBatteryLr30
   cost:
-    SalvageTicket: 250
+    SalvageTicket: 100
   categories:
   - SalvageConsumeables
   conditions:
@@ -308,20 +298,30 @@
   - !type:BuyerAccessCondition
 
 - type: listing
-  id: VendorSalvageMedkitCombatFilled
-  productEntity: MedkitCombatFilled
+  id: VendorSalvageBoxLethalshot
+  productEntity: BoxLethalshot
   cost:
-    SalvageTicket: 400
+    SalvageTicket: 200
   categories:
   - SalvageConsumeables
   conditions:
   - !type:BuyerAccessCondition
 
 - type: listing
-  id: VendorSalvageBoxFlare
-  productEntity: BoxFlare
+  id: VendorSalvageMedkitAdvancedFilled
+  productEntity: MedkitAdvancedFilled
   cost:
-    SalvageTicket: 15
+    SalvageTicket: 250
+  categories:
+  - SalvageConsumeables
+  conditions:
+  - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageMedkitCombatFilled
+  productEntity: MedkitCombatFilled
+  cost:
+    SalvageTicket: 400
   categories:
   - SalvageConsumeables
   conditions:
@@ -359,56 +359,6 @@
     - !type:BuyerAccessCondition
 
 - type: listing
-  id: VendorSalvageClothingShoesBootsSalvageMerc
-  productEntity: ClothingShoesBootsSalvageMerc
-  cost:
-    SalvageTicket: 150
-  categories:
-  - SalvageMercenaryEquipment
-  conditions:
-  - !type:BuyerAccessCondition
-
-- type: listing
-  id: VendorSalvageClothingHandsSalvageMercGlovesCombat
-  productEntity: ClothingHandsSalvageMercGlovesCombat
-  cost:
-    SalvageTicket: 150
-  categories:
-  - SalvageMercenaryEquipment
-  conditions:
-  - !type:BuyerAccessCondition
-
-- type: listing
-  id: VendorSalvageClothingEyesGlassesSalvageMercenary
-  productEntity: ClothingEyesGlassesSalvageMercenary
-  cost:
-    SalvageTicket: 90
-  categories:
-  - SalvageMercenaryEquipment
-  conditions:
-  - !type:BuyerAccessCondition
-
-#- type: listing
-#  id: VendorSalvageClothingOuterHardsuitMercenary
-#  productEntity: ClothingOuterHardsuitMercenary
-#  cost:
-#    SalvageTicket: 250
-#  categories:
-#  - SalvageMercenaryEquipment
-#  conditions:
-#  - !type:BuyerAccessCondition
-
-- type: listing
-  id: VendorSalvageClothingHeadHelmetSalvageMerc
-  productEntity: ClothingHeadHelmetSalvageMerc
-  cost:
-    SalvageTicket: 150
-  categories:
-  - SalvageMercenaryEquipment
-  conditions:
-  - !type:BuyerAccessCondition
-
-- type: listing
   id: VendorSalvageClothingUniformJumpsuitSalvageMercWhite
   productEntity: ClothingUniformJumpsuitSalvageMercWhite
   cost:
@@ -439,10 +389,40 @@
     - !type:BuyerAccessCondition
 
 - type: listing
-  id: VendorSalvageClothingOuterVestWebSalvageMerc
-  productEntity: ClothingOuterVestWebSalvageMerc
+  id: VendorSalvageClothingEyesGlassesSalvageMercenary
+  productEntity: ClothingEyesGlassesSalvageMercenary
   cost:
-    SalvageTicket: 200
+    SalvageTicket: 90
+  categories:
+  - SalvageMercenaryEquipment
+  conditions:
+  - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageClothingShoesBootsSalvageMerc
+  productEntity: ClothingShoesBootsSalvageMerc
+  cost:
+    SalvageTicket: 150
+  categories:
+  - SalvageMercenaryEquipment
+  conditions:
+  - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageClothingHandsSalvageMercGlovesCombat
+  productEntity: ClothingHandsSalvageMercGlovesCombat
+  cost:
+    SalvageTicket: 150
+  categories:
+  - SalvageMercenaryEquipment
+  conditions:
+  - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageClothingHeadHelmetSalvageMerc
+  productEntity: ClothingHeadHelmetSalvageMerc
+  cost:
+    SalvageTicket: 150
   categories:
   - SalvageMercenaryEquipment
   conditions:
@@ -457,6 +437,26 @@
   - SalvageMercenaryEquipment
   conditions:
   - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageClothingOuterVestWebSalvageMerc
+  productEntity: ClothingOuterVestWebSalvageMerc
+  cost:
+    SalvageTicket: 200
+  categories:
+  - SalvageMercenaryEquipment
+  conditions:
+  - !type:BuyerAccessCondition
+
+#- type: listing
+#  id: VendorSalvageClothingOuterHardsuitMercenary
+#  productEntity: ClothingOuterHardsuitMercenary
+#  cost:
+#    SalvageTicket: 250
+#  categories:
+#  - SalvageMercenaryEquipment
+#  conditions:
+#  - !type:BuyerAccessCondition
 
 
 #Cybernetics
