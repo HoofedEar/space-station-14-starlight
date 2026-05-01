@@ -1,20 +1,29 @@
 using System.Numerics;
+using Content.Server.Parallax;
+using Content.Server.Procedural;
 using Content.Server.Station.Events;
 using Content.Server.Station.Systems;
 using Content.Shared.Maps;
 using Content.Shared.Parallax.Biomes;
+using Content.Shared.Parallax.Biomes.Markers;
+using Content.Shared.Procedural;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
+using Robust.Shared.Prototypes;
+using Robust.Shared.Random;
 
 namespace Content.Server._Starlight.Station;
 
 public sealed class StationDropshipPlanetSystem : EntitySystem
 {
     [Dependency] private readonly StationSystem _station = default!;
-    [Dependency] private readonly SharedBiomeSystem _biome = default!;
+    [Dependency] private readonly BiomeSystem _biome = default!;
+    [Dependency] private readonly DungeonSystem _dungeon = default!;
     [Dependency] private readonly SharedTransformSystem _transform = default!;
     [Dependency] private readonly SharedMapSystem _map = default!;
     [Dependency] private readonly ITileDefinitionManager _tileDefMan = default!;
+    [Dependency] private readonly IPrototypeManager _proto = default!;
+    [Dependency] private readonly IRobustRandom _random = default!;
 
     public override void Initialize()
     {
@@ -35,17 +44,74 @@ public sealed class StationDropshipPlanetSystem : EntitySystem
 
         if (!TryComp<MapGridComponent>(mapUid, out var mapGrid))
             return;
-        if (!HasComp<BiomeComponent>(mapUid))
+        if (!TryComp<BiomeComponent>(mapUid, out var biome))
             return;
 
-        if (!TryFindLandingZone((mapUid, mapGrid), ent.Comp, out var landing))
+        var landing = Vector2.Zero;
+        if (TryFindLandingZone((mapUid, mapGrid), ent.Comp, out var found))
+        {
+            landing = found;
+            _transform.SetCoordinates(gridUid, new EntityCoordinates(mapUid, landing));
+        }
+        else
         {
             Log.Warning(
                 $"StationDropshipPlanet: no allowed-biome tile found within radius {ent.Comp.MaxScanRadius}; leaving dropship at origin");
-            return;
         }
 
-        _transform.SetCoordinates(gridUid, new EntityCoordinates(mapUid, landing));
+        AddMarkers(mapUid, biome, ent.Comp.OreMarkers);
+        AddMarkers(mapUid, biome, ent.Comp.MobMarkers);
+        ScatterDungeons((mapUid, mapGrid), landing, ent.Comp);
+    }
+
+    private void AddMarkers(
+        EntityUid mapUid,
+        BiomeComponent biome,
+        List<ProtoId<BiomeMarkerLayerPrototype>> markers)
+    {
+        foreach (var marker in markers)
+        {
+            _biome.AddMarkerLayer(mapUid, biome, marker);
+        }
+    }
+
+    private void ScatterDungeons(
+        Entity<MapGridComponent> map,
+        Vector2 origin,
+        StationDropshipPlanetComponent comp)
+    {
+        if (comp.DungeonConfigs.Count == 0)
+            return;
+
+        var count = _random.Next(comp.DungeonCountMin, comp.DungeonCountMax + 1);
+        var landingSiteEnabled = comp.LandingSiteOffsetMax > 0f;
+        for (var i = 0; i < count; i++)
+        {
+            var configId = _random.Pick(comp.DungeonConfigs);
+            if (!_proto.TryIndex(configId, out var config))
+            {
+                Log.Warning($"StationDropshipPlanet: unknown dungeon config '{configId}'");
+                continue;
+            }
+
+            var (offMin, offMax) = (i == 0 && landingSiteEnabled)
+                ? (comp.LandingSiteOffsetMin, comp.LandingSiteOffsetMax)
+                : (comp.DungeonOffsetMin, comp.DungeonOffsetMax);
+
+            var angle = _random.NextAngle();
+            var distance = _random.NextFloat(offMin, offMax);
+            var pos = (Vector2i)(origin + angle.ToVec() * distance);
+            var seed = _random.Next();
+
+            try
+            {
+                _dungeon.GenerateDungeon(config, map.Owner, map.Comp, pos, seed);
+            }
+            catch (Exception e)
+            {
+                Log.Warning($"StationDropshipPlanet: failed to generate dungeon {configId} at {pos}: {e.Message}");
+            }
+        }
     }
 
     private bool TryFindLandingZone(

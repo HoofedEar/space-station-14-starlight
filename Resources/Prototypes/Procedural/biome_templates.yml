@@ -152,13 +152,6 @@
         cellularReturnType: Distance2
       entities:
         - WallRock
-        # Starlight Start
-        - WallRockTin
-        - WallRockQuartz
-        - WallRockPlasma
-        - WallRockCoal
-        - WallRock
-        # Starlight End
     - !type:BiomeDummyLayer
       id: Loot
     # Water

@@ -14,6 +14,29 @@
         - type: StationBiome
           biome: Continental
         - type: StationDropshipPlanet
+          oreMarkers:
+            - OreIron
+            - OreCoal
+            - OreQuartz
+            - OreSalt
+            - OreGold
+            - OreSilver
+            - OrePlasma
+            - OreUranium
+            - OreDiamond
+            - OreArtifactFragment
+          mobMarkers:
+            - CarpsContinental
+          dungeonConfigs:
+            - Experiment
+            - ShipWreckDungeon
+            - Mineshaft
+          dungeonCountMin: 4
+          dungeonCountMax: 6
+          dungeonOffsetMin: 60
+          dungeonOffsetMax: 140
+          landingSiteOffsetMin: 25
+          landingSiteOffsetMax: 50
         - type: StationEmergencyShuttle
         - type: StationJobs
           availableJobs:

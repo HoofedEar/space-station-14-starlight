@@ -1,0 +1,7 @@
+- type: biomeMarkerLayer
+  id: CarpsContinental
+  prototype: MobCarpDungeon
+  radius: 18
+  maxCount: 24
+  minGroupSize: 1
+  maxGroupSize: 3
