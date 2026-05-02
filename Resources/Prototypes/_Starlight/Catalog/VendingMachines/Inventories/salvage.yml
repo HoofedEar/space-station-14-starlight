@@ -1,5 +1,15 @@
 #equipment
 - type: listing
+  id: VendorSalvageHandheldHealthAnalyzer
+  productEntity: HandheldHealthAnalyzer
+  cost:
+    SalvageTicket: 10
+  categories:
+    - SalvageEquipment
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
   id: VendorSalvageOreBag
   productEntity: OreBag
   cost:
@@ -184,6 +194,26 @@
   - !type:ListingLimitedStockCondition
     stock: 3
   - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageAdvancedMineralScanner
+  productEntity: AdvancedMineralScanner
+  cost:
+    SalvageTicket: 1500
+  categories:
+    - SalvageEquipment
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageOreBagOfHolding
+  productEntity: OreBagOfHolding
+  cost:
+    SalvageTicket: 2500
+  categories:
+    - SalvageEquipment
+  conditions:
+    - !type:BuyerAccessCondition
 
 #weapons
 - type: listing
@@ -516,31 +546,51 @@
 
 
 #Cybernetics
-- type: listing
-  id: VendorSalvageBrainImplantCommsExpedition
-  productEntity: BrainImplantCommsExpedition
-  cost:
-    SalvageTicket: 100
-  categories:
-  - SalvageCybernetics
-  conditions:
-  - !type:BuyerAccessCondition
+#- type: listing
+#  id: VendorSalvageBrainImplantCommsExpedition
+#  productEntity: BrainImplantCommsExpedition
+#  cost:
+#    SalvageTicket: 100
+#  categories:
+#  - SalvageCybernetics
+#  conditions:
+#  - !type:BuyerAccessCondition
+#
+#- type: listing
+#  id: VendorSalvageLeftArmCyberSpacer
+#  productEntity: LeftArmCyberSpacer
+#  cost:
+#    SalvageTicket: 700
+#  categories:
+#  - SalvageCybernetics
+#  conditions:
+#  - !type:BuyerAccessCondition
+#
+#- type: listing
+#  id: VendorSalvageRightArmCyberSpacer
+#  productEntity: RightArmCyberSpacer
+#  cost:
+#    SalvageTicket: 700
+#  categories:
+#  - SalvageCybernetics
+#  conditions:
+#  - !type:BuyerAccessCondition
 
 - type: listing
-  id: VendorSalvageLeftArmCyberSpacer
-  productEntity: LeftArmCyberSpacer
+  id: VendorSalvageOreProcessorIndustrialMachineCircuitboard
+  productEntity: OreProcessorIndustrialMachineCircuitboard
   cost:
-    SalvageTicket: 700
+    SalvageTicket: 750
   categories:
-  - SalvageCybernetics
+    - SalvageCybernetics
   conditions:
-  - !type:BuyerAccessCondition
+    - !type:BuyerAccessCondition
 
 - type: listing
-  id: VendorSalvageRightArmCyberSpacer
-  productEntity: RightArmCyberSpacer
+  id: VendorSalvageMaterialSiloMachineCircuitboard
+  productEntity: MaterialSiloMachineCircuitboard
   cost:
-    SalvageTicket: 700
+    SalvageTicket: 1000
   categories:
   - SalvageCybernetics
   conditions:

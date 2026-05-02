@@ -1,0 +1,10 @@
+dungeon-beacon-default = Structure
+dungeon-beacon-landing-site = Landing site
+dungeon-beacon-syndiedungeon = Syndicate outpost
+dungeon-beacon-shipwreckdungeon = Shipwreck
+dungeon-beacon-experiment = Experiment lab
+dungeon-beacon-mineshaft = Mineshaft
+dungeon-beacon-haunted = Haunted ruins
+dungeon-beacon-sovietdungeonweh = Soviet bunker
+dungeon-beacon-sovietdungeon = Soviet bunker
+dungeon-beacon-sovietstrategicresourceswarehousedungeon = Soviet warehouse

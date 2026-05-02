@@ -198,7 +198,8 @@ public sealed partial class DungeonSystem : SharedDungeonSystem
         MapGridComponent grid,
         Vector2i position,
         int seed,
-        EntityCoordinates? coordinates = null)
+        EntityCoordinates? coordinates = null,
+        IReadOnlySet<Vector2i>? reservedTiles = null)
     {
         var cancelToken = new CancellationTokenSource();
         var job = new DungeonJob.DungeonJob(
@@ -220,6 +221,7 @@ public sealed partial class DungeonSystem : SharedDungeonSystem
             seed,
             position,
             coordinates,
+            reservedTiles,
             cancelToken.Token);
 
         _dungeonJobs.Add(job, cancelToken);
@@ -231,7 +233,8 @@ public sealed partial class DungeonSystem : SharedDungeonSystem
         EntityUid gridUid,
         MapGridComponent grid,
         Vector2i position,
-        int seed)
+        int seed,
+        IReadOnlySet<Vector2i>? reservedTiles = null)
     {
         var cancelToken = new CancellationTokenSource();
         var job = new DungeonJob.DungeonJob(
@@ -253,6 +256,7 @@ public sealed partial class DungeonSystem : SharedDungeonSystem
             seed,
             position,
             null,
+            reservedTiles,
             cancelToken.Token);
 
         _dungeonJobs.Add(job, cancelToken);

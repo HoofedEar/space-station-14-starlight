@@ -28,16 +28,24 @@
             - OreArtifactFragment
           mobMarkers:
             - CarpsContinental
+            - SovietsContinental
+            - LizardsContinental
+            - FoxesContinental
+            - GoatsContinental
           dungeonConfigs:
             - Experiment
             - ShipWreckDungeon
             - Mineshaft
-          dungeonCountMin: 4
-          dungeonCountMax: 6
+            - Haunted
+            - SyndieDungeon
+            - SovietDungeonWeh
+          dungeonCountMin: 6
+          dungeonCountMax: 9
+          dungeonClearance: 30
           dungeonOffsetMin: 60
-          dungeonOffsetMax: 140
-          landingSiteOffsetMin: 28
-          landingSiteOffsetMax: 40
+          dungeonOffsetMax: 180
+          landingSiteOffsetMin: 55
+          landingSiteOffsetMax: 75
         - type: StationEmergencyShuttle
         - type: StationJobs
           availableJobs:

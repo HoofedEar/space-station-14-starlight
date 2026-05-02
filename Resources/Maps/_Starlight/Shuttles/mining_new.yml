@@ -477,6 +477,7 @@ entities:
               uniqueMixes:
                 - volume: 2500
                   temperature: 293.15
+                  immutable: True
                   moles:
                     - 21.824879
                     - 82.10312
@@ -1498,5 +1499,33 @@ entities:
         components:
           - type: Transform
             pos: -5.5,2.5
+            parent: 181
+  - proto: WeaponCapacitorRecharger
+    entities:
+      - uid: 204
+        components:
+          - type: Transform
+            pos: -1.5,5.5
+            parent: 181
+  - proto: Protolathe
+    entities:
+      - uid: 205
+        components:
+          - type: Transform
+            pos: -3.5,3.5
+            parent: 181
+  - proto: Autolathe
+    entities:
+      - uid: 206
+        components:
+          - type: Transform
+            pos: -1.5,3.5
+            parent: 181
+  - proto: VendingMachineSalvageSolo
+    entities:
+      - uid: 207
+        components:
+          - type: Transform
+            pos: -0.5,-2.5
             parent: 181
 ...

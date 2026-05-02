@@ -1,0 +1,38 @@
+- type: entity
+  name: bright flashlight
+  parent: FlashlightLantern
+  id: FlashlightLanternBright
+  description: A high-output flashlight that pushes its lamp well past spec. Burns through cells faster, but you can actually see what's eating you.
+  components:
+  - type: HandheldLight
+    addPrefix: false
+    wattage: 0.5
+    blinkingBehaviourId: blinking
+    radiatingBehaviourId: radiating
+  - type: LightBehaviour
+    behaviours:
+      - !type:FadeBehaviour
+        id: radiating
+        maxDuration: 2.0
+        startValue: 5.0
+        endValue: 4.0
+        isLooped: true
+        reverseWhenFinished: true
+      - !type:PulseBehaviour
+        id: blinking
+        interpolate: Nearest
+        maxDuration: 1.0
+        startValue: 0.1
+        endValue: 4.0
+        isLooped: true
+  - type: PointLight
+    enabled: false
+    mask: /Textures/_Starlight/Effects/LightMasks/cone_curve.png
+    autoRot: true
+    radius: 10
+    energy: 1.5
+    netsync: false
+  - type: StaticPrice
+    price: 80
+  - type: ItemPrice
+    fallbackPrice: 24

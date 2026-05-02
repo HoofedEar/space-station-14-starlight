@@ -5,3 +5,43 @@
   maxCount: 24
   minGroupSize: 1
   maxGroupSize: 3
+
+- type: biomeMarkerLayer
+  id: XenosContinental
+  prototype: MobXeno
+  radius: 32
+  maxCount: 10
+  minGroupSize: 1
+  maxGroupSize: 2
+
+- type: biomeMarkerLayer
+  id: SovietsContinental
+  prototype: MobSovietComradeFinka
+  radius: 32
+  maxCount: 10
+  minGroupSize: 1
+  maxGroupSize: 2
+
+- type: biomeMarkerLayer
+  id: LizardsContinental
+  prototype: MobLizard
+  radius: 24
+  maxCount: 14
+  minGroupSize: 1
+  maxGroupSize: 3
+
+- type: biomeMarkerLayer
+  id: FoxesContinental
+  prototype: MobFox
+  radius: 28
+  maxCount: 8
+  minGroupSize: 1
+  maxGroupSize: 1
+
+- type: biomeMarkerLayer
+  id: GoatsContinental
+  prototype: MobGoat
+  radius: 28
+  maxCount: 8
+  minGroupSize: 1
+  maxGroupSize: 1

@@ -121,7 +121,7 @@
 
 - type: storeCategory
   id: SalvageCybernetics
-  name: Cybernetics
+  name: Electronics
 
 # mining
 - type: storeCategory

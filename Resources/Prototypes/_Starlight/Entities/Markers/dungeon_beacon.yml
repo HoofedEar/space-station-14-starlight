@@ -1,0 +1,12 @@
+- type: entity
+  id: DungeonNavBeacon
+  name: dungeon beacon
+  categories: [ HideSpawnMenu ]
+  placement:
+    mode: SnapgridCenter
+  components:
+  - type: Transform
+    anchored: true
+  - type: NavMapBeacon
+    color: "#FFB347"
+    defaultText: dungeon-beacon-default

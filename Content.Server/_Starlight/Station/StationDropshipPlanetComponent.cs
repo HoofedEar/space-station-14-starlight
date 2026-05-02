@@ -59,6 +59,15 @@ public sealed partial class StationDropshipPlanetComponent : Component
     public float DungeonClearance = 16f;
 
     /// <summary>
+    /// Buffer (in tiles) added around the dropship's AABB when sweeping the planet
+    /// grid for dungeon walls / biome rocks to remove after dungeons are placed.
+    /// Belt-and-suspenders to keep airlocks and exit ramps unblocked even when a
+    /// dungeon's irregular shape pokes farther than its center-distance suggested.
+    /// </summary>
+    [DataField]
+    public float LandingZoneBuffer = 3f;
+
+    /// <summary>
     /// If non-zero, the first dungeon is placed in this range relative to the
     /// dropship instead of the normal scatter range, guaranteeing one nearby
     /// landing-site dungeon. Set to 0 to disable.
@@ -86,4 +95,12 @@ public sealed partial class StationDropshipPlanetComponent : Component
 
     [DataField]
     public bool Announced;
+
+    /// <summary>
+    /// Prototype spawned at every generated dungeon's center so handheld
+    /// station maps (and anything else reading <c>NavMapBeaconComponent</c>) can
+    /// locate them. Spawned anchored on the planet grid after generation.
+    /// </summary>
+    [DataField]
+    public EntProtoId DungeonBeaconPrototype = "DungeonNavBeacon";
 }

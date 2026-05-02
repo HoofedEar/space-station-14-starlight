@@ -3,6 +3,7 @@ lobby-state-soon = Round starting soon
 lobby-state-right-now-question = Right Now?
 lobby-state-right-now-confirmation = Right Now
 lobby-state-round-start-countdown-text = Round starts In: {$timeLeft}
+lobby-state-join-delay-countdown = Preparing planet... {$seconds}s
 lobby-state-ready-button-join-state = Join
 lobby-state-ready-button-ready-up-state = Ready Up
 lobby-state-player-status-not-ready = Not Ready

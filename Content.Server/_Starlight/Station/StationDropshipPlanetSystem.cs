@@ -1,6 +1,8 @@
 using System.Numerics;
+using System.Threading.Tasks;
 using Content.Server.Chat.Managers;
 using Content.Server.Parallax;
+using Content.Server.Pinpointer;
 using Content.Server.Procedural;
 using Content.Server.Station.Events;
 using Content.Server.Station.Systems;
@@ -10,6 +12,7 @@ using Content.Shared.Localizations;
 using Content.Shared.Maps;
 using Content.Shared.Parallax.Biomes;
 using Content.Shared.Parallax.Biomes.Markers;
+using Content.Shared.Pinpointer;
 using Content.Shared.Procedural;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
@@ -24,6 +27,7 @@ public sealed class StationDropshipPlanetSystem : EntitySystem
     [Dependency] private readonly StationSystem _station = default!;
     [Dependency] private readonly BiomeSystem _biome = default!;
     [Dependency] private readonly DungeonSystem _dungeon = default!;
+    [Dependency] private readonly NavMapSystem _navMap = default!;
     [Dependency] private readonly SharedTransformSystem _transform = default!;
     [Dependency] private readonly SharedMapSystem _map = default!;
     [Dependency] private readonly ITileDefinitionManager _tileDefMan = default!;
@@ -81,7 +85,7 @@ public sealed class StationDropshipPlanetSystem : EntitySystem
         var dropshipRadius = MathF.Sqrt(aabb.Width * aabb.Width + aabb.Height * aabb.Height) * 0.5f;
         var minDungeonDistance = dropshipRadius + ent.Comp.DungeonClearance;
 
-        ScatterDungeons((mapUid, mapGrid), landing, ent.Comp, minDungeonDistance);
+        _ = ScatterAndClearAsync((mapUid, mapGrid), (gridUid, dropshipGrid), landing, ent.Comp, minDungeonDistance);
     }
 
     private void OnPlayerSpawn(PlayerSpawnCompleteEvent args)
@@ -121,53 +125,174 @@ public sealed class StationDropshipPlanetSystem : EntitySystem
         }
     }
 
-    private void ScatterDungeons(
+    private async Task ScatterAndClearAsync(
         Entity<MapGridComponent> map,
+        Entity<MapGridComponent> dropship,
         Vector2 origin,
         StationDropshipPlanetComponent comp,
         float minDistance)
     {
-        if (comp.DungeonConfigs.Count == 0)
-            return;
+        // Pre-mark the dropship's footprint so dungeon generators skip these tiles
+        // entirely. Combined with the post-clear sweep this is belt-and-suspenders:
+        // pre-mark deflects the dungeon's own placements, post-clear catches biome
+        // rocks and any anchored entities the pre-mark didn't cover.
+        var reservedTiles = ComputeLandingReservedTiles(dropship, origin, comp.LandingZoneBuffer);
 
-        var count = _random.Next(comp.DungeonCountMin, comp.DungeonCountMax + 1);
-        var landingSiteEnabled = comp.LandingSiteOffsetMax > 0f;
-        // Cardinal direction for the landing-site dungeon (mirrors salvage's GetDungeonRotation)
-        // so players have a single seed-determined "walk this way" cue rather than searching every direction.
-        var landingAngle = new Angle(Math.PI / 2 * _random.Next(0, 4));
-        for (var i = 0; i < count; i++)
+        var tasks = new List<Task>();
+        var dungeons = new List<(Vector2i Pos, ProtoId<DungeonConfigPrototype> ConfigId, bool IsLandingSite)>();
+
+        if (comp.DungeonConfigs.Count > 0)
         {
-            var configId = _random.Pick(comp.DungeonConfigs);
-            if (!_proto.TryIndex(configId, out var config))
+            var count = _random.Next(comp.DungeonCountMin, comp.DungeonCountMax + 1);
+            var landingSiteEnabled = comp.LandingSiteOffsetMax > 0f;
+            // Cardinal direction for the landing-site dungeon (mirrors salvage's GetDungeonRotation)
+            // so players have a single seed-determined "walk this way" cue rather than searching every direction.
+            var landingAngle = new Angle(Math.PI / 2 * _random.Next(0, 4));
+            for (var i = 0; i < count; i++)
             {
-                Log.Warning($"StationDropshipPlanet: unknown dungeon config '{configId}'");
-                continue;
-            }
+                var configId = _random.Pick(comp.DungeonConfigs);
+                if (!_proto.TryIndex(configId, out var config))
+                {
+                    Log.Warning($"StationDropshipPlanet: unknown dungeon config '{configId}'");
+                    continue;
+                }
 
-            var isLandingSite = i == 0 && landingSiteEnabled;
-            var (offMin, offMax) = isLandingSite
-                ? (comp.LandingSiteOffsetMin, comp.LandingSiteOffsetMax)
-                : (comp.DungeonOffsetMin, comp.DungeonOffsetMax);
+                var isLandingSite = i == 0 && landingSiteEnabled;
+                var (offMin, offMax) = isLandingSite
+                    ? (comp.LandingSiteOffsetMin, comp.LandingSiteOffsetMax)
+                    : (comp.DungeonOffsetMin, comp.DungeonOffsetMax);
 
-            offMin = MathF.Max(offMin, minDistance);
-            offMax = MathF.Max(offMax, offMin + 1f);
+                offMin = MathF.Max(offMin, minDistance);
+                offMax = MathF.Max(offMax, offMin + 1f);
 
-            var angle = isLandingSite ? landingAngle : _random.NextAngle();
-            var distance = _random.NextFloat(offMin, offMax);
-            var offset = angle.ToVec() * distance;
-            var pos = (Vector2i)(origin + offset);
-            var seed = _random.Next();
+                var angle = isLandingSite ? landingAngle : _random.NextAngle();
+                var distance = _random.NextFloat(offMin, offMax);
+                var offset = angle.ToVec() * distance;
+                var pos = (Vector2i)(origin + offset);
+                var seed = _random.Next();
 
-            try
-            {
-                _dungeon.GenerateDungeon(config, map.Owner, map.Comp, pos, seed);
                 if (isLandingSite)
                     comp.LandingSiteDirection = offset;
+
+                dungeons.Add((pos, configId, isLandingSite));
+                tasks.Add(GenerateOne(config, map, pos, seed, configId, reservedTiles));
             }
-            catch (Exception e)
+        }
+
+        try
+        {
+            await Task.WhenAll(tasks);
+        }
+        catch (Exception e)
+        {
+            Log.Warning($"StationDropshipPlanet: dungeon job(s) failed: {e.Message}");
+        }
+
+        if (!Exists(map.Owner) || !Exists(dropship.Owner))
+            return;
+
+        ClearLandingZone(map, dropship, origin, comp.LandingZoneBuffer);
+        SpawnDungeonBeacons(map, dungeons, comp);
+    }
+
+    private void SpawnDungeonBeacons(
+        Entity<MapGridComponent> map,
+        List<(Vector2i Pos, ProtoId<DungeonConfigPrototype> ConfigId, bool IsLandingSite)> dungeons,
+        StationDropshipPlanetComponent comp)
+    {
+        foreach (var (pos, configId, isLandingSite) in dungeons)
+        {
+            // Centre of the tile so the beacon snaps cleanly when anchored.
+            var coords = new EntityCoordinates(map.Owner, pos + new Vector2(0.5f, 0.5f));
+            var beacon = Spawn(comp.DungeonBeaconPrototype, coords);
+
+            if (!TryComp<NavMapBeaconComponent>(beacon, out var navBeacon))
+                continue;
+
+            // Landing-site dungeon gets a dedicated label so the radio cue and the
+            // map marker line up; otherwise look up a friendly name per config and
+            // fall back to the raw config id when none is localised.
+            var key = isLandingSite
+                ? "dungeon-beacon-landing-site"
+                : $"dungeon-beacon-{configId.Id.ToLowerInvariant()}";
+            var text = Loc.TryGetString(key, out var label) ? label : configId.Id;
+            _navMap.SetBeaconText(beacon, text, navBeacon);
+            if (isLandingSite)
+                _navMap.SetBeaconColor(beacon, Color.Cyan, navBeacon);
+        }
+    }
+
+    private async Task GenerateOne(
+        DungeonConfigPrototype config,
+        Entity<MapGridComponent> map,
+        Vector2i pos,
+        int seed,
+        ProtoId<DungeonConfigPrototype> configId,
+        IReadOnlySet<Vector2i> reservedTiles)
+    {
+        try
+        {
+            await _dungeon.GenerateDungeonAsync(config, map.Owner, map.Comp, pos, seed, reservedTiles);
+        }
+        catch (Exception e)
+        {
+            Log.Warning($"StationDropshipPlanet: failed to generate dungeon {configId} at {pos}: {e.Message}");
+        }
+    }
+
+    private HashSet<Vector2i> ComputeLandingReservedTiles(
+        Entity<MapGridComponent> dropship,
+        Vector2 landing,
+        float buffer)
+    {
+        var area = dropship.Comp.LocalAABB.Translated(landing).Enlarged(buffer);
+        var reserved = new HashSet<Vector2i>();
+        var minX = (int)MathF.Floor(area.Left);
+        var maxX = (int)MathF.Ceiling(area.Right);
+        var minY = (int)MathF.Floor(area.Bottom);
+        var maxY = (int)MathF.Ceiling(area.Top);
+        for (var x = minX; x < maxX; x++)
+        {
+            for (var y = minY; y < maxY; y++)
             {
-                Log.Warning($"StationDropshipPlanet: failed to generate dungeon {configId} at {pos}: {e.Message}");
+                reserved.Add(new Vector2i(x, y));
             }
+        }
+        return reserved;
+    }
+
+    private void ClearLandingZone(
+        Entity<MapGridComponent> map,
+        Entity<MapGridComponent> dropship,
+        Vector2 landing,
+        float buffer)
+    {
+        // Dropship is parented to the planet at `landing` with rotation 0, so its
+        // local AABB translated by `landing` is the planet-grid area to clear.
+        var area = dropship.Comp.LocalAABB.Translated(landing).Enlarged(buffer);
+
+        // Materialize before mutating — deletes / SetTile invalidate the iterator.
+        var indices = new List<Vector2i>();
+        foreach (var tile in _map.GetLocalTilesIntersecting(map.Owner, map.Comp, area))
+        {
+            indices.Add(tile.GridIndices);
+        }
+
+        foreach (var idx in indices)
+        {
+            var anchored = new List<EntityUid>(_map.GetAnchoredEntities((map.Owner, map.Comp), idx));
+            foreach (var uid in anchored)
+            {
+                QueueDel(uid);
+            }
+
+            // Replace with the biome's natural tile so the area looks like ground,
+            // not space — SetTile marks the tile as modified, so the biome won't
+            // re-fill it on its own if we leave it Empty.
+            var replacement = _biome.TryGetBiomeTile(map.Owner, map.Comp, idx, out var biomeTile)
+                ? biomeTile.Value
+                : Tile.Empty;
+            _map.SetTile(map.Owner, map.Comp, idx, replacement);
         }
     }
 
