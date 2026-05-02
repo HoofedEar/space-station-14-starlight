@@ -616,13 +616,6 @@ entities:
           - type: Transform
             pos: -5.5,-1.5
             parent: 181
-  - proto: BorgModuleMining
-    entities:
-      - uid: 94
-        components:
-          - type: Transform
-            pos: -1.4982989,5.541272
-            parent: 181
   - proto: CableApcExtension
     entities:
       - uid: 1
@@ -897,14 +890,6 @@ entities:
             rot: 3.141592653589793 rad
             pos: -2.5,5.5
             parent: 181
-  - proto: GasPort
-    entities:
-      - uid: 25
-        components:
-          - type: Transform
-            rot: 1.5707963267948966 rad
-            pos: -4.5,-4.5
-            parent: 181
   - proto: GasVentPump
     entities:
       - uid: 26
@@ -980,20 +965,6 @@ entities:
           - type: Transform
             pos: -3.5,7.5
             parent: 181
-  - proto: Gyroscope
-    entities:
-      - uid: 169
-        components:
-          - type: Transform
-            pos: -0.5,-0.5
-            parent: 181
-  - proto: PersonalAI
-    entities:
-      - uid: 167
-        components:
-          - type: Transform
-            pos: -1.4453101,4.467156
-            parent: 181
   - proto: PoweredSmallLight
     entities:
       - uid: 138
@@ -1034,18 +1005,6 @@ entities:
             parent: 181
           - type: ApcPowerReceiver
             powerLoad: 0
-  - proto: Rack
-    entities:
-      - uid: 27
-        components:
-          - type: Transform
-            pos: -1.5,4.5
-            parent: 181
-      - uid: 52
-        components:
-          - type: Transform
-            pos: -0.5,-4.5
-            parent: 181
   - proto: RandomPosterAny
     entities:
       - uid: 22
@@ -1357,11 +1316,6 @@ entities:
             parent: 181
   - proto: SpawnPointLatejoin
     entities:
-      - uid: 170
-        components:
-          - type: Transform
-            pos: -1.5,-3.5
-            parent: 181
       - uid: 171
         components:
           - type: Transform
@@ -1369,35 +1323,10 @@ entities:
             parent: 181
   - proto: SpawnPointSalvageSpecialist
     entities:
-      - uid: 177
-        components:
-          - type: Transform
-            pos: -3.5,-3.5
-            parent: 181
-      - uid: 178
-        components:
-          - type: Transform
-            pos: -2.5,-3.5
-            parent: 181
-      - uid: 180
-        components:
-          - type: Transform
-            pos: -2.5,-2.5
-            parent: 181
       - uid: 184
         components:
           - type: Transform
             pos: -3.5,-2.5
-            parent: 181
-      - uid: 182
-        components:
-          - type: Transform
-            pos: -1.5,-2.5
-            parent: 181
-      - uid: 185
-        components:
-          - type: Transform
-            pos: -1.5,-1.5
             parent: 181
       - uid: 186
         components:
@@ -1431,20 +1360,6 @@ entities:
         components:
           - type: Transform
             pos: -1.5,-5.5
-            parent: 181
-  - proto: Pickaxe
-    entities:
-      - uid: 190
-        components:
-          - type: Transform
-            pos: -0.5,-4.5
-            parent: 181
-  - proto: WeaponProtoKineticAccelerator
-    entities:
-      - uid: 193
-        components:
-          - type: Transform
-            pos: -0.5,-4.5
             parent: 181
   - proto: Wrench
     entities:
@@ -1507,25 +1422,58 @@ entities:
           - type: Transform
             pos: -1.5,5.5
             parent: 181
-  - proto: Protolathe
+  - proto: VendingMachineSalvageSolo
     entities:
-      - uid: 205
+      - uid: 208
         components:
           - type: Transform
-            pos: -3.5,3.5
+            pos: -0.5,-0.5
             parent: 181
   - proto: Autolathe
     entities:
-      - uid: 206
+      - uid: 209
         components:
           - type: Transform
-            pos: -1.5,3.5
+            pos: -4.5,-4.5
             parent: 181
-  - proto: VendingMachineSalvageSolo
+  - proto: Recycler
     entities:
-      - uid: 207
+      - uid: 210
         components:
           - type: Transform
             pos: -0.5,-2.5
+            parent: 181
+  - proto: ConveyorBelt
+    entities:
+      - uid: 211
+        components:
+          - type: Transform
+            pos: -0.5,-1.5
+            parent: 181
+      - uid: 212
+        components:
+          - type: Transform
+            pos: -0.5,-3.5
+            parent: 181
+  - proto: Multitool
+    entities:
+      - uid: 213
+        components:
+          - type: Transform
+            pos: -0.5,-4.5
+            parent: 181
+  - proto: TwoWayLever
+    entities:
+      - uid: 214
+        components:
+          - type: Transform
+            pos: -1.5,-3.5
+            parent: 181
+  - proto: FloorDrain
+    entities:
+      - uid: 215
+        components:
+          - type: Transform
+            pos: -2.5,-2.5
             parent: 181
 ...

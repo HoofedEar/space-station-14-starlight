@@ -6,6 +6,7 @@ using Content.Server.Pinpointer;
 using Content.Server.Procedural;
 using Content.Server.Station.Events;
 using Content.Server.Station.Systems;
+using Content.Server._HoofedEar.Light;
 using Content.Shared.Chat;
 using Content.Shared.GameTicking;
 using Content.Shared.Light.Components;
@@ -88,6 +89,8 @@ public sealed class StationDropshipPlanetSystem : EntitySystem
         {
             cycle.OriginalColor = mapLight.AmbientLightColor;
             Dirty(mapUid, cycle);
+
+            EnsureComp<SleepCycleSkipComponent>(mapUid);
         }
 
         // Half-diagonal of the dropship AABB is the worst-case overlap radius for a

@@ -8,7 +8,7 @@
   description: continental-drop-description
   showInVote: false
   minPlayers: 0
-  maxPlayers: 10
+  maxPlayers: 4
   supportedMaps: ContinentalDropshipPool
   rules:
     - BasicStationEventScheduler
