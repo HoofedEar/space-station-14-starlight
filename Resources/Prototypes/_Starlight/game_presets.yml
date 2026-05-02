@@ -94,19 +94,3 @@
     - RailroadingTerminator # Starlight
     - RailroadingMinor # Starlight
     # - CosmicCult # Starlight
-
-- type: gamePreset
-  id: ContinentalDrop
-  alias:
-    - drop
-    - dropship
-    - continental
-  name: continental-drop-title
-  description: continental-drop-description
-  showInVote: false
-  minPlayers: 0
-  maxPlayers: 10
-  supportedMaps: ContinentalDropshipPool
-  rules:
-    - BasicStationEventScheduler
-    - BasicRoundstartVariation

@@ -22,7 +22,7 @@ using Robust.Client.UserInterface.CustomControls;
 
 namespace Content.Client.Lobby
 {
-    public sealed class LobbyState : Robust.Client.State.State
+    public sealed partial class LobbyState : Robust.Client.State.State
     {
         [Dependency] private readonly IBaseClient _baseClient = default!;
         [Dependency] private readonly IConfigurationManager _cfg = default!;
@@ -43,11 +43,6 @@ namespace Content.Client.Lobby
         public LobbyGui? Lobby;
 
         private bool _readyPossibleWithCharacters;
-
-        // Starlight: hold the late-join button for a moment after the round starts so the
-        // dropship-planet generator (dungeons, ore/mob markers, landing-zone clear) has
-        // time to settle before players slot in.
-        private static readonly TimeSpan JoinDelay = TimeSpan.FromSeconds(10);
 
         protected override void Startup()
         {
@@ -103,9 +98,8 @@ namespace Content.Client.Lobby
         {
             if (!Lobby!.ReadyButton.ToggleMode)
             {
-                if (IsJoinDelayActive(out var remaining))
-                    return Loc.GetString("ui-lobby-ready-button-tooltip-join-delay",
-                        ("seconds", (int)Math.Ceiling(remaining.TotalSeconds)));
+                if (TryGetJoinDelayTooltip(out var delayTooltip))
+                    return delayTooltip;
                 return Loc.GetString("ui-lobby-ready-button-tooltip-join-state");
             }
             if (!_preferences.ServerDataLoaded)
@@ -173,23 +167,8 @@ namespace Content.Client.Lobby
             {
                 var roundTime = _gameTiming.CurTime.Subtract(_gameTicker.RoundStartTimeSpan);
                 Lobby!.StationTime.Text = Loc.GetString("lobby-state-player-status-round-time", ("hours", roundTime.Hours), ("minutes", roundTime.Minutes));
-
-                // Starlight: keep the join button locked until JoinDelay has elapsed; show the
-                // remaining seconds in the StartTime label so players know to wait, not panic.
-                if (IsJoinDelayActive(out var remaining))
-                {
-                    Lobby!.ReadyButton.Disabled = true;
-                    Lobby!.StartTime.Text = Loc.GetString(
-                        "lobby-state-join-delay-countdown",
-                        ("seconds", (int)Math.Ceiling(remaining.TotalSeconds)));
-                }
-                else
-                {
+                if (!UpdateJoinDelayFrame())
                     Lobby!.StartTime.Text = string.Empty;
-                    // Don't fight LobbyLateJoinStatusUpdated — only re-enable when late join is allowed.
-                    if (Lobby!.ReadyButton.Disabled && !_gameTicker.DisallowedLateJoin)
-                        Lobby!.ReadyButton.Disabled = false;
-                }
                 return;
             }
 
@@ -244,8 +223,7 @@ namespace Content.Client.Lobby
                 Lobby!.ReadyButton.Text = Loc.GetString("lobby-state-ready-button-join-state");
                 Lobby!.ReadyButton.ToggleMode = false;
                 Lobby!.ReadyButton.Pressed = false;
-                // Starlight: respect the post-round-start join delay; FrameUpdate flips this back once it expires.
-                Lobby!.ReadyButton.Disabled = IsJoinDelayActive(out _);
+                Lobby!.ReadyButton.Disabled = ShouldDisableReadyOnGameStart();
                 Lobby!.ObserveButton.Disabled = false;
             }
             else
@@ -375,20 +353,6 @@ namespace Content.Client.Lobby
             }
 
             SetReady(Lobby.ReadyButton.Pressed);
-        }
-
-        private bool IsJoinDelayActive(out TimeSpan remaining)
-        {
-            remaining = TimeSpan.Zero;
-            if (!_gameTicker.IsGameStarted)
-                return false;
-
-            var elapsed = _gameTiming.CurTime - _gameTicker.RoundStartTimeSpan;
-            if (elapsed >= JoinDelay)
-                return false;
-
-            remaining = JoinDelay - elapsed;
-            return true;
         }
     }
 }

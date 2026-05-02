@@ -13,16 +13,3 @@
     WeaponProtoKineticAccelerator: 10 # starlight end
   contrabandInventory:
     PlushieCarp: 1
-
-- type: vendingMachineInventory
-  id: SalvageEquipmentInventorySolo
-  startingInventory: # Starlight - begin inv increase for our large pops
-    Crowbar: 2
-    Pickaxe: 2
-    OreBag: 1
-    Flare: 4
-    FlashlightLantern: 2
-    HandheldStationMap: 1
-    WeaponProtoKineticAccelerator: 3
-  contrabandInventory:
-    PlushieCarp: 1

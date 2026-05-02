@@ -1541,15 +1541,6 @@
     - Salvage
 
 - type: entity
-  parent: VendingMachineSalvage
-  id: VendingMachineSalvageSolo
-  name: Solo-Salvage Vendor
-  description: For those who go alone!
-  components:
-    - type: VendingMachine
-      pack: SalvageEquipmentInventorySolo
-
-- type: entity
   parent: VendingMachine
   id: VendingMachineDonut
   name: Monkin' Donuts

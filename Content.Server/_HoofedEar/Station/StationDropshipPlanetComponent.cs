@@ -3,7 +3,7 @@ using Content.Shared.Parallax.Biomes.Markers;
 using Content.Shared.Procedural;
 using Robust.Shared.Prototypes;
 
-namespace Content.Server._Starlight.Station;
+namespace Content.Server._HoofedEar.Station;
 
 /// <summary>
 /// Translates the station's largest grid (the dropship) onto a tile of the

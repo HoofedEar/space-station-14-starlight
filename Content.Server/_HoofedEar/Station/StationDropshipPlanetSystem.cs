@@ -8,6 +8,7 @@ using Content.Server.Station.Events;
 using Content.Server.Station.Systems;
 using Content.Shared.Chat;
 using Content.Shared.GameTicking;
+using Content.Shared.Light.Components;
 using Content.Shared.Localizations;
 using Content.Shared.Maps;
 using Content.Shared.Parallax.Biomes;
@@ -20,7 +21,7 @@ using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 
-namespace Content.Server._Starlight.Station;
+namespace Content.Server._HoofedEar.Station;
 
 public sealed class StationDropshipPlanetSystem : EntitySystem
 {
@@ -79,6 +80,16 @@ public sealed class StationDropshipPlanetSystem : EntitySystem
         AddMarkers(mapUid, biome, ent.Comp.MobMarkers);
         ent.Comp.PlanetMap = mapUid;
 
+        // BiomeSystem.EnsurePlanet runs at StationPostInit, after MapInit has fired, so
+        // LightCycleComponent's MapInit handler won't seed OriginalColor from MapLightComponent.
+        // Without this the cycle multiplies Color.Transparent and the planet stays black.
+        if (TryComp<LightCycleComponent>(mapUid, out var cycle) &&
+            TryComp<MapLightComponent>(mapUid, out var mapLight))
+        {
+            cycle.OriginalColor = mapLight.AmbientLightColor;
+            Dirty(mapUid, cycle);
+        }
+
         // Half-diagonal of the dropship AABB is the worst-case overlap radius for a
         // dungeon center placed in any direction. Floor every dungeon offset at this.
         var aabb = dropshipGrid.LocalAABB;
@@ -132,12 +143,6 @@ public sealed class StationDropshipPlanetSystem : EntitySystem
         StationDropshipPlanetComponent comp,
         float minDistance)
     {
-        // Pre-mark the dropship's footprint so dungeon generators skip these tiles
-        // entirely. Combined with the post-clear sweep this is belt-and-suspenders:
-        // pre-mark deflects the dungeon's own placements, post-clear catches biome
-        // rocks and any anchored entities the pre-mark didn't cover.
-        var reservedTiles = ComputeLandingReservedTiles(dropship, origin, comp.LandingZoneBuffer);
-
         var tasks = new List<Task>();
         var dungeons = new List<(Vector2i Pos, ProtoId<DungeonConfigPrototype> ConfigId, bool IsLandingSite)>();
 
@@ -175,7 +180,7 @@ public sealed class StationDropshipPlanetSystem : EntitySystem
                     comp.LandingSiteDirection = offset;
 
                 dungeons.Add((pos, configId, isLandingSite));
-                tasks.Add(GenerateOne(config, map, pos, seed, configId, reservedTiles));
+                tasks.Add(GenerateOne(config, map, pos, seed, configId));
             }
         }
 
@@ -227,38 +232,16 @@ public sealed class StationDropshipPlanetSystem : EntitySystem
         Entity<MapGridComponent> map,
         Vector2i pos,
         int seed,
-        ProtoId<DungeonConfigPrototype> configId,
-        IReadOnlySet<Vector2i> reservedTiles)
+        ProtoId<DungeonConfigPrototype> configId)
     {
         try
         {
-            await _dungeon.GenerateDungeonAsync(config, map.Owner, map.Comp, pos, seed, reservedTiles);
+            await _dungeon.GenerateDungeonAsync(config, map.Owner, map.Comp, pos, seed);
         }
         catch (Exception e)
         {
             Log.Warning($"StationDropshipPlanet: failed to generate dungeon {configId} at {pos}: {e.Message}");
         }
-    }
-
-    private HashSet<Vector2i> ComputeLandingReservedTiles(
-        Entity<MapGridComponent> dropship,
-        Vector2 landing,
-        float buffer)
-    {
-        var area = dropship.Comp.LocalAABB.Translated(landing).Enlarged(buffer);
-        var reserved = new HashSet<Vector2i>();
-        var minX = (int)MathF.Floor(area.Left);
-        var maxX = (int)MathF.Ceiling(area.Right);
-        var minY = (int)MathF.Floor(area.Bottom);
-        var maxY = (int)MathF.Ceiling(area.Top);
-        for (var x = minX; x < maxX; x++)
-        {
-            for (var y = minY; y < maxY; y++)
-            {
-                reserved.Add(new Vector2i(x, y));
-            }
-        }
-        return reserved;
     }
 
     private void ClearLandingZone(

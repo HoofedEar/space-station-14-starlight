@@ -1,0 +1,29 @@
+- type: entity
+  parent: VendingMachineSalvage
+  id: VendingMachineSalvageSolo
+  name: Solo-Salvage Vendor
+  description: For those who go alone!
+  components:
+    - type: VendingMachine
+      pack: SalvageEquipmentInventorySolo
+
+# Solo-salvage ticket vendor — parallel to SLVendingMachineSalvage but bound to the
+# SalvageSolo* category set so the solo dropship preset can iterate without disturbing
+# the crewed salvage vendor.
+- type: entity
+  parent: SLVendingMachineSalvage
+  id: SLVendingMachineSalvageSolo
+  name: solo salvage ticket machine
+  description: For those who go alone!
+  components:
+    - type: Store
+      name: vendor-salvage-ticket-machine
+      categories:
+        - SalvageSoloEquipment
+        - SalvageSoloWeapons
+        - SalvageSoloConsumeables
+        - SalvageSoloMercenaryEquipment
+        - SalvageSoloElectronics
+        - SLSecret
+      currencyWhitelist:
+        - SalvageTicket

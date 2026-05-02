@@ -1,0 +1,520 @@
+# Listings for the Solo-Salvage ticket vendor. IDs and category names are prefixed with
+# "Solo" so they don't collide or share filtering with the baseline salvage ticket vendor;
+# tweak freely without worrying about the crewed vendor.
+
+#equipment
+- type: listing
+  id: VendorSalvageSoloHandheldHealthAnalyzer
+  productEntity: HandheldHealthAnalyzer
+  cost:
+    SalvageTicket: 10
+  categories:
+    - SalvageSoloEquipment
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloOreBag
+  productEntity: OreBag
+  cost:
+    SalvageTicket: 25
+  categories:
+    - SalvageSoloEquipment
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloHandHeldMassScanner
+  productEntity: HandHeldMassScanner
+  cost:
+    SalvageTicket: 35
+  categories:
+    - SalvageSoloEquipment
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloFireHelmet
+  productEntity: ClothingHeadHelmetFire
+  cost:
+    SalvageTicket: 40
+  categories:
+    - SalvageSoloEquipment
+  conditions:
+    - !type:ListingLimitedStockCondition
+      stock: 3
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloBinoculars
+  productEntity: Binoculars
+  cost:
+    SalvageTicket: 75
+  categories:
+    - SalvageSoloEquipment
+  conditions:
+    - !type:ListingLimitedStockCondition
+      stock: 3
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloClothingMaskGasExplorer
+  productEntity: ClothingMaskGasExplorer
+  cost:
+    SalvageTicket: 100
+  categories:
+    - SalvageSoloEquipment
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloClothingOuterHardsuitSpatio
+  productEntity: ClothingOuterHardsuitSpatio
+  cost:
+    SalvageTicket: 100
+  categories:
+    - SalvageSoloEquipment
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloClothingOuterHardsuitLuxury
+  productEntity: ClothingOuterHardsuitLuxury
+  cost:
+    SalvageTicket: 150
+  categories:
+    - SalvageSoloEquipment
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloMiningDrill
+  productEntity: MiningDrill
+  cost:
+    SalvageTicket: 200
+  categories:
+    - SalvageSoloEquipment
+  conditions:
+    - !type:ListingLimitedStockCondition
+      stock: 1
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloClothingOuterHardsuitSalvage
+  productEntity: ClothingOuterHardsuitSalvage
+  cost:
+    SalvageTicket: 250
+  categories:
+    - SalvageSoloEquipment
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloFloodlight
+  productEntity: Floodlight
+  cost:
+    SalvageTicket: 250
+  categories:
+    - SalvageSoloEquipment
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloMineralScanner
+  productEntity: MineralScanner
+  cost:
+    SalvageTicket: 350
+  categories:
+    - SalvageSoloEquipment
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloMiningDrillDiamond
+  productEntity: MiningDrillDiamond
+  cost:
+    SalvageTicket: 400
+  categories:
+    - SalvageSoloEquipment
+  conditions:
+    - !type:ListingLimitedStockCondition
+      stock: 1
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloWeaponMechMelleDrill
+  productEntity: WeaponMechMelleDrill
+  cost:
+    SalvageTicket: 400
+  categories:
+    - SalvageSoloEquipment
+  conditions:
+    - !type:ListingLimitedStockCondition
+      stock: 1
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloWeaponMechMelleDrillDiamond
+  productEntity: WeaponMechMelleDrillDiamond
+  cost:
+    SalvageTicket: 600
+  categories:
+    - SalvageSoloEquipment
+  conditions:
+    - !type:ListingLimitedStockCondition
+      stock: 1
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloMechClarke
+  productEntity: MechClarke
+  cost:
+    SalvageTicket: 700
+  categories:
+    - SalvageSoloEquipment
+  conditions:
+    - !type:ListingLimitedStockCondition
+      stock: 1
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloClothingOuterHardsuitMaxim
+  productEntity: ClothingOuterHardsuitMaxim
+  cost:
+    SalvageTicket: 1200
+  categories:
+    - SalvageSoloEquipment
+  conditions:
+    - !type:ListingLimitedStockCondition
+      stock: 3
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloAdvancedMineralScanner
+  productEntity: AdvancedMineralScanner
+  cost:
+    SalvageTicket: 1500
+  categories:
+    - SalvageSoloEquipment
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloOreBagOfHolding
+  productEntity: OreBagOfHolding
+  cost:
+    SalvageTicket: 2500
+  categories:
+    - SalvageSoloEquipment
+  conditions:
+    - !type:BuyerAccessCondition
+
+#weapons
+- type: listing
+  id: VendorSalvageSoloWeaponShotgunGA12
+  productEntity: WeaponShotgunGA12
+  cost:
+    SalvageTicket: 200
+  categories:
+    - SalvageSoloWeapons
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloWeaponPistolMK58
+  productEntity: WeaponPistolMk58
+  cost:
+    SalvageTicket: 250
+  categories:
+    - SalvageSoloWeapons
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloWeaponRevolverZOZ
+  productEntity: WeaponRevolverZOZ
+  cost:
+    SalvageTicket: 350
+  categories:
+    - SalvageSoloWeapons
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloWeaponLr30
+  productEntity: WeaponLr30
+  cost:
+    SalvageTicket: 350
+  categories:
+    - SalvageSoloWeapons
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloWeaponLaserImmolator
+  productEntity: WeaponLaserImmolator
+  cost:
+    SalvageTicket: 500
+  categories:
+    - SalvageSoloWeapons
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloWeaponShotgunCycler
+  productEntity: WeaponShotgunCycler
+  cost:
+    SalvageTicket: 500
+  categories:
+    - SalvageSoloWeapons
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloPKAUpgradeDamage
+  productEntity: PKAUpgradeDamage
+  cost:
+    SalvageTicket: 300
+  categories:
+    - SalvageSoloWeapons
+  conditions:
+    - !type:ListingLimitedStockCondition
+      stock: 5
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloPKAUpgradeRange
+  productEntity: PKAUpgradeRange
+  cost:
+    SalvageTicket: 300
+  categories:
+    - SalvageSoloWeapons
+  conditions:
+    - !type:ListingLimitedStockCondition
+      stock: 5
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloPKAUpgradeFireRate
+  productEntity: PKAUpgradeFireRate
+  cost:
+    SalvageTicket: 300
+  categories:
+    - SalvageSoloWeapons
+  conditions:
+    - !type:ListingLimitedStockCondition
+      stock: 5
+    - !type:BuyerAccessCondition
+
+#consumables
+- type: listing
+  id: VendorSalvageSoloBoxFlare
+  productEntity: BoxFlare
+  cost:
+    SalvageTicket: 15
+  categories:
+    - SalvageSoloConsumeables
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloBoxMRE
+  productEntity: BoxMRE
+  cost:
+    SalvageTicket: 25
+  categories:
+    - SalvageSoloConsumeables
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloSpeedLoaderMagnumSP
+  productEntity: SpeedLoaderMagnumSP
+  cost:
+    SalvageTicket: 75
+  categories:
+    - SalvageSoloConsumeables
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloMagazineMK58
+  productEntity: MagazinePistolSP
+  cost:
+    SalvageTicket: 75
+  categories:
+    - SalvageSoloConsumeables
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloSpeedLoaderShotgunEmpty
+  productEntity: SpeedLoaderShotgunEmpty
+  cost:
+    SalvageTicket: 100
+  categories:
+    - SalvageSoloConsumeables
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloMagazineBatteryLr30
+  productEntity: MagazineBatteryLr30
+  cost:
+    SalvageTicket: 100
+  categories:
+    - SalvageSoloConsumeables
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloMedkitFilled
+  productEntity: MedkitFilled
+  cost:
+    SalvageTicket: 150
+  categories:
+    - SalvageSoloConsumeables
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloBoxLethalshot
+  productEntity: BoxLethalshot
+  cost:
+    SalvageTicket: 200
+  categories:
+    - SalvageSoloConsumeables
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloMedkitAdvancedFilled
+  productEntity: MedkitAdvancedFilled
+  cost:
+    SalvageTicket: 250
+  categories:
+    - SalvageSoloConsumeables
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloMedkitCombatFilled
+  productEntity: MedkitCombatFilled
+  cost:
+    SalvageTicket: 400
+  categories:
+    - SalvageSoloConsumeables
+  conditions:
+    - !type:BuyerAccessCondition
+
+#Merc Stuff
+- type: listing
+  id: VendorSalvageSoloClothingHeadHatBeretSalvageMercPurple
+  productEntity: ClothingHeadHatBeretSalvageMercPurple
+  cost:
+    SalvageTicket: 25
+  categories:
+    - SalvageSoloMercenaryEquipment
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloClothingHeadHatBeretSalvageMercGreen
+  productEntity: ClothingHeadHatBeretSalvageMercGreen
+  cost:
+    SalvageTicket: 25
+  categories:
+    - SalvageSoloMercenaryEquipment
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloClothingHeadHatBeretSalvageMercBrown
+  productEntity: ClothingHeadHatBeretSalvageMercBrown
+  cost:
+    SalvageTicket: 25
+  categories:
+    - SalvageSoloMercenaryEquipment
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloClothingEyesGlassesSalvageMercenary
+  productEntity: ClothingEyesGlassesSalvageMercenary
+  cost:
+    SalvageTicket: 90
+  categories:
+    - SalvageSoloMercenaryEquipment
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloClothingShoesBootsSalvageMerc
+  productEntity: ClothingShoesBootsSalvageMerc
+  cost:
+    SalvageTicket: 150
+  categories:
+    - SalvageSoloMercenaryEquipment
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloClothingHandsSalvageMercGlovesCombat
+  productEntity: ClothingHandsSalvageMercGlovesCombat
+  cost:
+    SalvageTicket: 150
+  categories:
+    - SalvageSoloMercenaryEquipment
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloClothingHeadHelmetSalvageMerc
+  productEntity: ClothingHeadHelmetSalvageMerc
+  cost:
+    SalvageTicket: 150
+  categories:
+    - SalvageSoloMercenaryEquipment
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloClothingBeltSalvageMercWebbing
+  productEntity: ClothingBeltSalvageMercWebbing
+  cost:
+    SalvageTicket: 150
+  categories:
+    - SalvageSoloMercenaryEquipment
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloClothingOuterVestWebSalvageMerc
+  productEntity: ClothingOuterVestWebSalvageMerc
+  cost:
+    SalvageTicket: 200
+  categories:
+    - SalvageSoloMercenaryEquipment
+  conditions:
+    - !type:BuyerAccessCondition
+
+#Electronics
+- type: listing
+  id: VendorSalvageSoloOreProcessorIndustrialMachineCircuitboard
+  productEntity: OreProcessorIndustrialMachineCircuitboard
+  cost:
+    SalvageTicket: 750
+  categories:
+    - SalvageSoloElectronics
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloMaterialSiloMachineCircuitboard
+  productEntity: MaterialSiloMachineCircuitboard
+  cost:
+    SalvageTicket: 1000
+  categories:
+    - SalvageSoloElectronics
+  conditions:
+    - !type:BuyerAccessCondition

@@ -1034,12 +1034,7 @@ public sealed partial class BiomeSystem : SharedBiomeSystem
 
         EnsureComp<RoofComponent>(mapUid);
 
-        // EnsurePlanet runs at StationPostInit, after the map's MapInit has already fired,
-        // so LightCycleComponent's MapInit handler won't seed OriginalColor from MapLightComponent.
-        // Seed it manually here, otherwise the cycle multiplies Color.Transparent (=0) and the planet stays black.
-        var cycle = EnsureComp<LightCycleComponent>(mapUid);
-        cycle.OriginalColor = light.AmbientLightColor;
-        Dirty(mapUid, cycle, metadata);
+        EnsureComp<LightCycleComponent>(mapUid);
 
         EnsureComp<SunShadowComponent>(mapUid);
         EnsureComp<SunShadowCycleComponent>(mapUid);

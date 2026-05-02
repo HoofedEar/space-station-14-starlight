@@ -1,0 +1,23 @@
+# Solo-salvage variant of the SalvageTicket vendor categories. Kept distinct from the
+# baseline Salvage* set so listings authored for the solo vendor never bleed into the
+# crewed salvage ticket vendor.
+
+- type: storeCategory
+  id: SalvageSoloEquipment
+  name: Equipment
+
+- type: storeCategory
+  id: SalvageSoloWeapons
+  name: Weapons
+
+- type: storeCategory
+  id: SalvageSoloConsumeables
+  name: Consumeables
+
+- type: storeCategory
+  id: SalvageSoloMercenaryEquipment
+  name: Scrapper
+
+- type: storeCategory
+  id: SalvageSoloElectronics
+  name: Electronics

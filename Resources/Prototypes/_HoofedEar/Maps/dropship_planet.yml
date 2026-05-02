@@ -1,7 +1,7 @@
 - type: gameMap
   id: ContinentalDropship
   mapName: 'NT-Reclaimer'
-  mapPath: /Maps/_Starlight/Shuttles/mining_new.yml
+  mapPath: /Maps/_HoofedEar/Shuttles/mining_new.yml
   isGrid: true
   minPlayers: 0
   maxPlayers: 10

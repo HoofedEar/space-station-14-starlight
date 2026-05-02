@@ -58,8 +58,6 @@ public sealed partial class DungeonJob : Job<List<Dungeon>>
 
     private readonly EntityCoordinates? _targetCoordinates;
 
-    private readonly IReadOnlySet<Vector2i>? _initialReservedTiles;
-
     private readonly ISawmill _sawmill;
 
     public DungeonJob(
@@ -81,7 +79,6 @@ public sealed partial class DungeonJob : Job<List<Dungeon>>
         int seed,
         Vector2i position,
         EntityCoordinates? targetCoordinates = null,
-        IReadOnlySet<Vector2i>? initialReservedTiles = null,
         CancellationToken cancellation = default) : base(maxTime, cancellation)
     {
         _sawmill = sawmill;
@@ -109,7 +106,6 @@ public sealed partial class DungeonJob : Job<List<Dungeon>>
         _seed = seed;
         _position = position;
         _targetCoordinates = targetCoordinates;
-        _initialReservedTiles = initialReservedTiles;
     }
 
     /// <summary>
@@ -171,9 +167,7 @@ public sealed partial class DungeonJob : Job<List<Dungeon>>
         var position = (_position + random.NextPolarVector2(_gen.MinOffset, _gen.MaxOffset)).Floored();
 
         // Tiles we can no longer generate on due to being reserved elsewhere.
-        var reservedTiles = _initialReservedTiles != null
-            ? new HashSet<Vector2i>(_initialReservedTiles)
-            : new HashSet<Vector2i>();
+        var reservedTiles = new HashSet<Vector2i>();
 
         var dungeons = await GetDungeons(position, _gen, _gen.Layers, reservedTiles, _seed, random);
         // To make it slightly more deterministic treat this RNG as separate ig.
