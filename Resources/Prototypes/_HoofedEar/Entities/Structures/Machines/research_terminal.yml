@@ -1,0 +1,18 @@
+- type: entity
+  parent: ComputerResearchAndDevelopment
+  id: ComputerResearchTerminalHoofedEar
+  name: R&D terminal
+  description: A combined R&D server and research console with a ticket reader. Feed it tickets or research disks to fund research.
+  components:
+  - type: ResearchServer
+    serverName: RTSERVER
+  - type: TechnologyDatabase
+    supportedDisciplines:
+    - Industrial
+    - Arsenal
+    - Experimental
+    - CivilianServices
+    - Biochemical
+  - type: TicketResearchConsumer
+    acceptedStackType: SalvageTicket
+    pointsPerTicket: 50
