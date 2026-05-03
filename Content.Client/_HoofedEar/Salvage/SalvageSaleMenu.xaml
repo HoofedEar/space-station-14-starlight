@@ -1,0 +1,36 @@
+<controls:FancyWindow xmlns="https://spacestation14.io"
+                      xmlns:controls="clr-namespace:Content.Client.UserInterface.Controls"
+            SetSize="320 190"
+            MinSize="320 190"
+                      Title="{Loc 'salvage-sale-console-menu-title'}">
+    <BoxContainer Orientation="Vertical" Margin="5">
+        <BoxContainer Orientation="Horizontal">
+            <Label Text="{Loc 'salvage-sale-menu-rate-label'}"
+                   StyleClasses="LabelKeyText" />
+            <Label Name="RateLabel" />
+        </BoxContainer>
+        <BoxContainer Orientation="Horizontal">
+            <Label Text="{Loc 'salvage-sale-menu-spesos-label'}"
+                   StyleClasses="LabelKeyText" />
+            <Label Name="SpesosLabel"
+                   Text="{Loc 'salvage-sale-menu-no-goods-text'}" />
+        </BoxContainer>
+        <BoxContainer Orientation="Horizontal">
+            <Label Text="{Loc 'salvage-sale-menu-tickets-label'}"
+                   StyleClasses="LabelKeyText" />
+            <Label Name="TicketsLabel"
+                   Text="{Loc 'salvage-sale-menu-no-goods-text'}" />
+        </BoxContainer>
+        <BoxContainer Orientation="Horizontal">
+            <Label Text="{Loc 'salvage-sale-menu-count-label'}"
+                   StyleClasses="LabelKeyText" />
+            <Label Name="CountLabel"
+                   Text="{Loc 'salvage-sale-menu-no-goods-text'}" />
+        </BoxContainer>
+        <Button Name="AppraiseButton"
+                Text="{Loc 'salvage-sale-appraise-button'}"/>
+        <Button Name="SellButton"
+                Text="{Loc 'salvage-sale-sell-button'}"/>
+        <TextureButton VerticalExpand="True" />
+    </BoxContainer>
+</controls:FancyWindow>

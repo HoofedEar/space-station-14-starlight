@@ -103,4 +103,12 @@ public sealed partial class StationDropshipPlanetComponent : Component
     /// </summary>
     [DataField]
     public EntProtoId DungeonBeaconPrototype = "DungeonNavBeacon";
+
+    /// <summary>
+    /// Prototype spawned on the planet grid at the dropship's center after the
+    /// landing zone is cleared, so the ship's location is visible on the planet's
+    /// nav map while players are walking the surface.
+    /// </summary>
+    [DataField]
+    public EntProtoId DropshipBeaconPrototype = "DropshipNavBeacon";
 }

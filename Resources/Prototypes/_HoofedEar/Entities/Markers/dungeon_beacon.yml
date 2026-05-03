@@ -10,3 +10,16 @@
   - type: NavMapBeacon
     color: "#FFB347"
     defaultText: dungeon-beacon-default
+
+- type: entity
+  id: DropshipNavBeacon
+  name: dropship beacon
+  categories: [ HideSpawnMenu ]
+  placement:
+    mode: SnapgridCenter
+  components:
+  - type: Transform
+    anchored: true
+  - type: NavMapBeacon
+    color: "#7CFC00"
+    defaultText: dropship-beacon-name

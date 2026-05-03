@@ -1,0 +1,40 @@
+- type: entity
+  id: ComputerSalvageSaleConsole
+  parent: BaseComputerAiAccess
+  name: salvage sale computer
+  description: Used to sell goods loaded onto cargo pallets in exchange for salvage tickets.
+  components:
+  - type: Sprite
+    layers:
+    - map: ["computerLayerBody"]
+      state: computer
+    - map: ["computerLayerKeyboard"]
+      state: generic_keyboard
+    - map: ["computerLayerScreen"]
+      state: transfer
+    - map: ["computerLayerKeys"]
+      state: generic_keys
+    - map: [ "enum.WiresVisualLayers.MaintenancePanel" ]
+      state: generic_panel_open
+  - type: Anchorable
+    flags:
+    - Anchorable
+  - type: SalvageSaleConsole
+    spesosPerTicket: 100
+  - type: ActivatableUI
+    key: enum.SalvageSaleConsoleUiKey.Sale
+  - type: UserInterface
+    interfaces:
+      enum.SalvageSaleConsoleUiKey.Sale:
+        type: SalvageSaleConsoleBoundUserInterface
+      enum.WiresUiKey.Key:
+        type: WiresBoundUserInterface
+  - type: Computer
+    board: SalvageSaleComputerCircuitboard
+  - type: PointLight
+    radius: 2.5
+    energy: 1.5
+    color: "#b89f25"
+  - type: GuideHelp
+    guides:
+    - Cargo

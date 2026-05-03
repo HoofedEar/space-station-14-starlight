@@ -1,0 +1,10 @@
+- type: entity
+  parent: BaseComputerCircuitboard
+  id: SalvageSaleComputerCircuitboard
+  name: salvage sale computer board
+  description: A computer printed circuit board for a salvage sale computer.
+  components:
+    - type: Sprite
+      state: cpu_supply
+    - type: ComputerBoard
+      prototype: ComputerSalvageSaleConsole

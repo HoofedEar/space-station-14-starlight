@@ -1,0 +1,1 @@
+dropship-beacon-name = Dropship

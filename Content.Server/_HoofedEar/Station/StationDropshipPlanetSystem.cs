@@ -200,7 +200,22 @@ public sealed class StationDropshipPlanetSystem : EntitySystem
             return;
 
         ClearLandingZone(map, dropship, origin, comp.LandingZoneBuffer);
+        SpawnDropshipBeacon(map, dropship, origin, comp);
         SpawnDungeonBeacons(map, dungeons, comp);
+    }
+
+    private void SpawnDropshipBeacon(
+        Entity<MapGridComponent> map,
+        Entity<MapGridComponent> dropship,
+        Vector2 origin,
+        StationDropshipPlanetComponent comp)
+    {
+        // Anchor on the planet grid (not the dropship) so the marker shows up on
+        // the planet's nav map while players are walking the surface. The ship
+        // never moves once landed, so a fixed marker at its center is correct.
+        var center = origin + dropship.Comp.LocalAABB.Center;
+        var coords = new EntityCoordinates(map.Owner, center);
+        Spawn(comp.DropshipBeaconPrototype, coords);
     }
 
     private void SpawnDungeonBeacons(
