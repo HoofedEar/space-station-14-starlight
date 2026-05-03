@@ -6,6 +6,7 @@ using Content.Shared.Mobs.Components;
 using Robust.Server.GameObjects;
 using Robust.Shared.Audio;
 using Robust.Shared.Audio.Systems;
+using Robust.Shared.Prototypes;
 
 namespace Content.Server._HoofedEar.Salvage;
 
@@ -22,6 +23,8 @@ public sealed class SalvageSaleConsoleSystem : EntitySystem
     private EntityQuery<TransformComponent> _xformQuery;
     private EntityQuery<CargoSellBlacklistComponent> _blacklistQuery;
     private EntityQuery<MobStateComponent> _mobQuery;
+    private EntityQuery<MetaDataComponent> _metaQuery;
+    private EntityQuery<SalvageSaleBlacklistComponent> _saleBlacklistQuery;
 
     public override void Initialize()
     {
@@ -30,6 +33,8 @@ public sealed class SalvageSaleConsoleSystem : EntitySystem
         _xformQuery = GetEntityQuery<TransformComponent>();
         _blacklistQuery = GetEntityQuery<CargoSellBlacklistComponent>();
         _mobQuery = GetEntityQuery<MobStateComponent>();
+        _metaQuery = GetEntityQuery<MetaDataComponent>();
+        _saleBlacklistQuery = GetEntityQuery<SalvageSaleBlacklistComponent>();
 
         SubscribeLocalEvent<SalvageSaleConsoleComponent, BoundUIOpenedEvent>(OnUiOpen);
         SubscribeLocalEvent<SalvageSaleConsoleComponent, SalvageSaleAppraiseMessage>(OnAppraise);
@@ -55,7 +60,7 @@ public sealed class SalvageSaleConsoleSystem : EntitySystem
         if (pallets.Count == 0)
             return;
 
-        GatherGoods(pallets, out var toSell, out var totalSpesos);
+        GatherGoods(uid, pallets, out var toSell, out var totalSpesos);
 
         var rate = Math.Max(1, component.SpesosPerTicket);
         var tickets = (int) (totalSpesos / rate);
@@ -84,7 +89,7 @@ public sealed class SalvageSaleConsoleSystem : EntitySystem
             return;
         }
 
-        GatherGoods(GetSellPallets(gridUid), out var toSell, out var totalSpesos);
+        GatherGoods(uid, GetSellPallets(gridUid), out var toSell, out var totalSpesos);
         var tickets = (int) (totalSpesos / rate);
 
         _ui.SetUiState(uid,
@@ -107,10 +112,14 @@ public sealed class SalvageSaleConsoleSystem : EntitySystem
         return result;
     }
 
-    private void GatherGoods(List<EntityUid> pallets, out HashSet<EntityUid> toSell, out double totalSpesos)
+    private void GatherGoods(EntityUid console, List<EntityUid> pallets, out HashSet<EntityUid> toSell, out double totalSpesos)
     {
         toSell = new HashSet<EntityUid>();
         totalSpesos = 0;
+
+        HashSet<EntProtoId>? protoBlacklist = null;
+        if (_saleBlacklistQuery.TryGetComponent(console, out var saleBlacklist) && saleBlacklist.Blacklist.Count > 0)
+            protoBlacklist = saleBlacklist.Blacklist;
 
         var setEnts = new HashSet<EntityUid>();
         foreach (var palletUid in pallets)
@@ -133,6 +142,9 @@ public sealed class SalvageSaleConsoleSystem : EntitySystem
                 if (_blacklistQuery.HasComponent(ent))
                     continue;
 
+                if (protoBlacklist != null && IsProtoBlacklisted(ent, protoBlacklist))
+                    continue;
+
                 var price = _pricing.GetPrice(ent);
                 if (price == 0)
                     continue;
@@ -141,6 +153,26 @@ public sealed class SalvageSaleConsoleSystem : EntitySystem
                 totalSpesos += price;
             }
         }
+    }
+
+    private bool IsProtoBlacklisted(EntityUid uid, HashSet<EntProtoId> blacklist)
+    {
+        if (_metaQuery.TryGetComponent(uid, out var meta) &&
+            meta.EntityPrototype is { } proto &&
+            blacklist.Contains(proto.ID))
+            return true;
+
+        if (!_xformQuery.TryGetComponent(uid, out var xform))
+            return false;
+
+        var children = xform.ChildEnumerator;
+        while (children.MoveNext(out var child))
+        {
+            if (IsProtoBlacklisted(child, blacklist))
+                return true;
+        }
+
+        return false;
     }
 
     private bool CanSell(EntityUid uid, TransformComponent xform)

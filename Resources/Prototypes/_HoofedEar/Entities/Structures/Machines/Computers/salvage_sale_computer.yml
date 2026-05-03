@@ -21,6 +21,73 @@
     - Anchorable
   - type: SalvageSaleConsole
     spesosPerTicket: 100
+  # Items obtainable from the salvage ticket vendor or the solo salvage vending machine.
+  # Listed here so players can't recycle them back into tickets.
+  - type: SalvageSaleBlacklist
+    blacklist:
+    - AdvancedMineralScanner
+    - Binoculars
+    - BoxFlare
+    - BoxLethalshot
+    - BoxMRE
+    - BrainImplantCommsExpedition
+    - ClothingBeltSalvageMercWebbing
+    - ClothingEyesGlassesSalvageMercenary
+    - ClothingHandsSalvageMercGlovesCombat
+    - ClothingHeadHatBeretSalvageMercBrown
+    - ClothingHeadHatBeretSalvageMercGreen
+    - ClothingHeadHatBeretSalvageMercPurple
+    - ClothingHeadHelmetFire
+    - ClothingHeadHelmetSalvageMerc
+    - ClothingMaskGasExplorer
+    - ClothingOuterHardsuitLuxury
+    - ClothingOuterHardsuitMaxim
+    - ClothingOuterHardsuitSalvage
+    - ClothingOuterHardsuitSpatio
+    - ClothingOuterVestWebSalvageMerc
+    - ClothingShoesBootsSalvageMerc
+    - ClothingUniformJumpsuitSalvageMercBrown
+    - ClothingUniformJumpsuitSalvageMercGreen
+    - ClothingUniformJumpsuitSalvageMercWhite
+    - Crowbar
+    - Flare
+    - FlashlightLanternBright
+    - Floodlight
+    - HandheldHealthAnalyzer
+    - HandHeldMassScanner
+    - HandheldStationMap
+    - LeftArmCyberSpacer
+    - MagazineBatteryLr30
+    - MagazinePistolSP
+    - MaterialSiloMachineCircuitboard
+    - MechClarke
+    - MedkitAdvancedFilled
+    - MedkitCombatFilled
+    - MedkitFilled
+    - MineralScanner
+    - MiningDrill
+    - MiningDrillDiamond
+    - OreBag
+    - OreBagOfHolding
+    - OreProcessorIndustrialMachineCircuitboard
+    - Pickaxe
+    - PKAUpgradeDamage
+    - PKAUpgradeFireRate
+    - PKAUpgradeRange
+    - PlushieCarp
+    - RightArmCyberSpacer
+    - SpeedLoaderMagnumSP
+    - SpeedLoaderShotgunEmpty
+    - WeaponGrapplingGun
+    - WeaponLaserImmolator
+    - WeaponLr30
+    - WeaponMechMelleDrill
+    - WeaponMechMelleDrillDiamond
+    - WeaponPistolMk58
+    - WeaponProtoKineticAccelerator
+    - WeaponRevolverZOZ
+    - WeaponShotgunCycler
+    - WeaponShotgunGA12
   - type: ActivatableUI
     key: enum.SalvageSaleConsoleUiKey.Sale
   - type: UserInterface
