@@ -33,6 +33,9 @@ public sealed partial class ResearchSystem
     {
         foreach (var client in component.Clients)
         {
+            if (client == uid)
+                continue;
+            SyncClientWithServer(client);
             RaiseLocalEvent(client, ref args);
         }
     }

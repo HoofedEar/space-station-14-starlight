@@ -1,7 +1,10 @@
+using Content.Server._HoofedEar.Salvage.Bounty;
 using Content.Server.Cargo.Components;
 using Content.Server.Cargo.Systems;
 using Content.Server.Stack;
+using Content.Server.Station.Systems;
 using Content.Shared._HoofedEar.Salvage;
+using Content.Shared._HoofedEar.Salvage.Bounty;
 using Content.Shared.Mobs.Components;
 using Robust.Server.GameObjects;
 using Robust.Shared.Audio;
@@ -12,11 +15,14 @@ namespace Content.Server._HoofedEar.Salvage;
 
 public sealed class SalvageSaleConsoleSystem : EntitySystem
 {
+    [Dependency] private readonly IPrototypeManager _protoMan = default!;
     [Dependency] private readonly EntityLookupSystem _lookup = default!;
     [Dependency] private readonly PricingSystem _pricing = default!;
     [Dependency] private readonly StackSystem _stack = default!;
     [Dependency] private readonly SharedAudioSystem _audio = default!;
+    [Dependency] private readonly StationSystem _station = default!;
     [Dependency] private readonly UserInterfaceSystem _ui = default!;
+    [Dependency] private readonly SalvageBountyConsoleSystem _bounties = default!;
 
     private static readonly SoundPathSpecifier ApproveSound = new("/Audio/Effects/Cargo/ping.ogg");
 
@@ -64,6 +70,10 @@ public sealed class SalvageSaleConsoleSystem : EntitySystem
 
         var rate = Math.Max(1, component.SpesosPerTicket);
         var tickets = (int) (totalSpesos / rate);
+
+        var bonusTickets = ResolveBountyRewards(uid, toSell);
+        tickets += bonusTickets;
+
         if (tickets <= 0)
             return;
 
@@ -75,6 +85,49 @@ public sealed class SalvageSaleConsoleSystem : EntitySystem
 
         _audio.PlayPvs(ApproveSound, uid);
         UpdateUi(uid, component);
+    }
+
+    /// <summary>
+    /// For every labeled crate in <paramref name="toSell"/> whose bounty is satisfied,
+    /// removes the bounty from the station database and returns the total bonus tickets.
+    /// </summary>
+    private int ResolveBountyRewards(EntityUid console, HashSet<EntityUid> toSell)
+    {
+        if (_station.GetOwningStation(console) is not { } station ||
+            !TryComp<StationSalvageBountyDatabaseComponent>(station, out var db))
+            return 0;
+
+        var bonus = 0;
+        var refill = false;
+
+        foreach (var ent in toSell)
+        {
+            if (!_bounties.TryGetBountyLabel(ent, out _, out var label))
+                continue;
+
+            if (label.AssociatedStationId != station)
+                continue;
+
+            if (!_bounties.TryGetBountyFromId(station, label.Id, out var bounty, db))
+                continue;
+
+            if (!_bounties.IsBountyComplete(ent, bounty.Value))
+                continue;
+
+            if (!_protoMan.TryIndex(bounty.Value.Bounty, out var proto))
+                continue;
+
+            if (!_bounties.TryRemoveBounty(station, bounty.Value, false))
+                continue;
+
+            bonus += proto.Reward;
+            refill = true;
+        }
+
+        if (refill)
+            _bounties.FillBountyDatabase(station, db);
+
+        return bonus;
     }
 
     private void UpdateUi(EntityUid uid, SalvageSaleConsoleComponent component)

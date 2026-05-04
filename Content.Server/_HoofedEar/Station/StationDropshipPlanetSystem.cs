@@ -156,9 +156,20 @@ public sealed class StationDropshipPlanetSystem : EntitySystem
             // Cardinal direction for the landing-site dungeon (mirrors salvage's GetDungeonRotation)
             // so players have a single seed-determined "walk this way" cue rather than searching every direction.
             var landingAngle = new Angle(Math.PI / 2 * _random.Next(0, 4));
+            // Pick without replacement: shuffle the pool and walk it, reshuffling once
+            // exhausted so a count larger than the pool still maximises unique types
+            // before repeating any.
+            var shuffled = new List<ProtoId<DungeonConfigPrototype>>(comp.DungeonConfigs);
+            _random.Shuffle(shuffled);
+            var pickIndex = 0;
             for (var i = 0; i < count; i++)
             {
-                var configId = _random.Pick(comp.DungeonConfigs);
+                if (pickIndex >= shuffled.Count)
+                {
+                    _random.Shuffle(shuffled);
+                    pickIndex = 0;
+                }
+                var configId = shuffled[pickIndex++];
                 if (!_proto.TryIndex(configId, out var config))
                 {
                     Log.Warning($"StationDropshipPlanet: unknown dungeon config '{configId}'");

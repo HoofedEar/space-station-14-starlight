@@ -8,3 +8,5 @@ dungeon-beacon-haunted = Haunted ruins
 dungeon-beacon-sovietdungeonweh = Soviet bunker
 dungeon-beacon-sovietdungeon = Soviet bunker
 dungeon-beacon-sovietstrategicresourceswarehousedungeon = Soviet warehouse
+dungeon-beacon-lavabrig = Abandoned brig
+dungeon-beacon-snowylabs = Frozen labs

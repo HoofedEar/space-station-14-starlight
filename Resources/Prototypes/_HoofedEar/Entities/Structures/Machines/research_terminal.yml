@@ -6,6 +6,8 @@
   components:
   - type: ResearchServer
     serverName: RTSERVER
+  - type: AccessReader
+    access: [[ "Salvage" ]]
   - type: TechnologyDatabase
     supportedDisciplines:
     - Industrial

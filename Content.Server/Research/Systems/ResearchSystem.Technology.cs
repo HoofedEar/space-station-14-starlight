@@ -162,6 +162,8 @@ public sealed partial class ResearchSystem
     {
         if (args.Server != null)
             return;
+        if (HasComp<ResearchServerComponent>(uid))
+            return;
         component.MainDiscipline = null;
         component.CurrentTechnologyCards = new List<string>();
         component.SupportedDisciplines = new List<ProtoId<TechDisciplinePrototype>>();

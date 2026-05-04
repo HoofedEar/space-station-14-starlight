@@ -20,7 +20,7 @@
     flags:
     - Anchorable
   - type: SalvageSaleConsole
-    spesosPerTicket: 100
+    spesosPerTicket: 10
   # Items obtainable from the salvage ticket vendor or the solo salvage vending machine.
   # Listed here so players can't recycle them back into tickets.
   - type: SalvageSaleBlacklist
@@ -88,6 +88,15 @@
     - WeaponRevolverZOZ
     - WeaponShotgunCycler
     - WeaponShotgunGA12
+    - SalvageTicket
+    - SalvageTicket5
+    - SalvageTicket10
+    - SalvageTicket15
+    - SalvageTicket20
+    - SalvageTicket25
+    - SalvageTicket30
+    - SalvageTicket50
+    - SalvageTicket100
   - type: ActivatableUI
     key: enum.SalvageSaleConsoleUiKey.Sale
   - type: UserInterface

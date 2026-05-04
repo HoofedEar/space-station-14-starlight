@@ -39,6 +39,10 @@
             - Haunted
             - SyndieDungeon
             - SovietDungeonWeh
+            - SovietDungeon
+            - SovietStrategicResourcesWarehouseDungeon
+            - LavaBrig
+            - SnowyLabs
           dungeonCountMin: 6
           dungeonCountMax: 9
           dungeonClearance: 30
@@ -47,6 +51,7 @@
           landingSiteOffsetMin: 55
           landingSiteOffsetMax: 75
         - type: StationEmergencyShuttle
+        - type: StationSalvageBountyDatabase
         - type: StationJobs
           availableJobs:
             SalvageSpecialist: [ -1, 10 ]

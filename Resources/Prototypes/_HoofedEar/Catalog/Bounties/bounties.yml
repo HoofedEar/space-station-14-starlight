@@ -1,0 +1,292 @@
+# Salvage bounty board bounties for the ContinentalDrop and friends.
+# Reward is paid in salvage tickets via the salvage sale console.
+
+- type: salvageBounty
+  id: SalvageBountyOreGold
+  reward: 50
+  description: salvage-bounty-description-ore-gold
+  group: SalvageBoardBounty
+  sprite:
+    sprite: Objects/Materials/ore.rsi
+    state: gold
+  entries:
+  - name: salvage-bounty-item-ore-gold
+    amount: 30
+    whitelist:
+      tags:
+      - OreGold
+
+- type: salvageBounty
+  id: SalvageBountyOreSilver
+  reward: 50
+  description: salvage-bounty-description-ore-silver
+  group: SalvageBoardBounty
+  sprite:
+    sprite: Objects/Materials/ore.rsi
+    state: silver
+  entries:
+  - name: salvage-bounty-item-ore-silver
+    amount: 30
+    whitelist:
+      tags:
+      - OreSilver
+
+- type: salvageBounty
+  id: SalvageBountyOrePlasma
+  reward: 80
+  description: salvage-bounty-description-ore-plasma
+  group: SalvageBoardBounty
+  sprite:
+    sprite: Objects/Materials/ore.rsi
+    state: plasma
+  entries:
+  - name: salvage-bounty-item-ore-plasma
+    amount: 30
+    whitelist:
+      tags:
+      - OrePlasma
+
+- type: salvageBounty
+  id: SalvageBountyOreUranium
+  reward: 100
+  description: salvage-bounty-description-ore-uranium
+  group: SalvageBoardBounty
+  sprite:
+    sprite: Objects/Materials/ore.rsi
+    state: uranium
+  entries:
+  - name: salvage-bounty-item-ore-uranium
+    amount: 20
+    whitelist:
+      tags:
+      - OreUranium
+
+- type: salvageBounty
+  id: SalvageBountyOreHaul
+  reward: 60
+  description: salvage-bounty-description-ore-haul
+  group: SalvageBoardBounty
+  sprite:
+    sprite: Objects/Materials/ore.rsi
+    state: iron
+  entries:
+  - name: salvage-bounty-item-ore-haul
+    amount: 80
+    whitelist:
+      tags:
+      - Ore
+
+- type: salvageBounty
+  id: SalvageBountyArtifact
+  reward: 150
+  description: salvage-bounty-description-artifact
+  group: SalvageBoardBounty
+  sprite:
+    sprite: Objects/Specific/Xenoarchaeology/xeno_artifacts.rsi
+    state: ano04
+  entries:
+  - name: salvage-bounty-item-artifact
+    amount: 1
+    whitelist:
+      components:
+      - XenoArtifact
+
+- type: salvageBounty
+  id: SalvageBountyCarpTeeth
+  reward: 80
+  description: salvage-bounty-description-carp-teeth
+  group: SalvageBoardBounty
+  sprite:
+    sprite: Mobs/Aliens/Carps/space.rsi
+    state: icon
+  entries:
+  - name: salvage-bounty-item-carp-teeth
+    amount: 8
+    whitelist:
+      tags:
+      - ToothSpaceCarp
+
+- type: salvageBounty
+  id: SalvageBountyResearchDisks
+  reward: 120
+  description: salvage-bounty-description-research-disks
+  group: SalvageBoardBounty
+  sprite:
+    sprite: Objects/Specific/Research/researchdisk.rsi
+    state: icon
+  entries:
+  - name: salvage-bounty-item-research-disks
+    amount: 3
+    whitelist:
+      components:
+      - TechnologyDisk
+
+- type: salvageBounty
+  id: SalvageBountyBananium
+  reward: 120
+  description: salvage-bounty-description-ore-bananium
+  group: SalvageBoardBounty
+  sprite:
+    sprite: Objects/Materials/ore.rsi
+    state: bananium
+  entries:
+  - name: salvage-bounty-item-ore-bananium
+    amount: 10
+    whitelist:
+      tags:
+      - OreBananium
+
+- type: salvageBounty
+  id: SalvageBountyBedsheets
+  reward: 80
+  description: salvage-bounty-description-bedsheets
+  group: SalvageBoardBounty
+  sprite:
+    sprite: Objects/Misc/bedsheets.rsi
+    state: sheetwhite
+  entries:
+  - name: salvage-bounty-item-bedsheets
+    amount: 5
+    whitelist:
+      tags:
+      - Bedsheet
+
+- type: salvageBounty
+  id: SalvageBountyAnomalyCore
+  reward: 200
+  description: salvage-bounty-description-anomaly-core
+  group: SalvageBoardBounty
+  sprite:
+    sprite: Structures/Specific/anomaly.rsi
+    state: anom1
+  entries:
+  - name: salvage-bounty-item-anomaly-core
+    amount: 1
+    whitelist:
+      components:
+      - AnomalyCore
+
+- type: salvageBounty
+  id: SalvageBountyOrgans
+  reward: 60
+  description: salvage-bounty-description-organs
+  group: SalvageBoardBounty
+  sprite:
+    sprite: Mobs/Species/Human/organs.rsi
+    state: heart-on
+  entries:
+  - name: salvage-bounty-item-organs
+    amount: 8
+    whitelist:
+      components:
+      - Organ
+
+- type: salvageBounty
+  id: SalvageBountyLungs
+  reward: 100
+  description: salvage-bounty-description-lungs
+  group: SalvageBoardBounty
+  sprite:
+    sprite: Mobs/Species/Human/organs.rsi
+    state: lung-l
+  entries:
+  - name: salvage-bounty-item-lungs
+    amount: 3
+    whitelist:
+      components:
+      - Lung
+
+- type: salvageBounty
+  id: SalvageBountyBatteries
+  reward: 130
+  description: salvage-bounty-description-batteries
+  group: SalvageBoardBounty
+  sprite:
+    sprite: Objects/Power/power_cells.rsi
+    state: medium
+  entries:
+  - name: salvage-bounty-item-batteries
+    amount: 15
+    whitelist:
+      components:
+      - Battery
+
+- type: salvageBounty
+  id: SalvageBountyToolboxes
+  reward: 70
+  description: salvage-bounty-description-toolboxes
+  group: SalvageBoardBounty
+  sprite:
+    sprite: Objects/Tools/Toolboxes/toolbox_red.rsi
+    state: icon
+  entries:
+  - name: salvage-bounty-item-toolboxes
+    amount: 6
+    whitelist:
+      tags:
+      - Toolbox
+
+- type: salvageBounty
+  id: SalvageBountyKnives
+  reward: 70
+  description: salvage-bounty-description-knives
+  group: SalvageBoardBounty
+  sprite:
+    sprite: Objects/Weapons/Melee/kitchen_knife.rsi
+    state: icon
+  entries:
+  - name: salvage-bounty-item-knives
+    amount: 5
+    whitelist:
+      components:
+      - Sharp
+      tags:
+      - UtilityKnife
+
+- type: salvageBounty
+  id: SalvageBountyScrap
+  reward: 80
+  description: salvage-bounty-description-scrap
+  group: SalvageBoardBounty
+  sprite:
+    sprite: Objects/Materials/Scrap/generic.rsi
+    state: metal-1
+  entries:
+  - name: salvage-bounty-item-scrap
+    amount: 10
+    whitelist:
+      tags:
+      - SalvageScrap
+
+- type: salvageBounty
+  id: SalvageBountyMeat
+  reward: 80
+  description: salvage-bounty-description-meat
+  group: SalvageBoardBounty
+  sprite:
+    sprite: Objects/Consumable/Food/meat.rsi
+    state: clump
+  entries:
+  - name: salvage-bounty-item-meat
+    amount: 20
+    whitelist:
+      tags:
+      - Meat
+    blacklist:
+      components:
+      - SliceableFood
+
+- type: salvageBounty
+  id: SalvageBountyTrash
+  reward: 30
+  description: salvage-bounty-description-trash
+  group: SalvageBoardBounty
+  sprite:
+    sprite: Objects/Specific/Janitorial/trashbag.rsi
+    state: icon-3
+  entries:
+  - name: salvage-bounty-item-trash
+    amount: 10
+    whitelist:
+      tags:
+      - Trash

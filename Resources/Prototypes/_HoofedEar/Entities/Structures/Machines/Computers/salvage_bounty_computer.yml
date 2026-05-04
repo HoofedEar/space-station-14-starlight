@@ -1,0 +1,36 @@
+- type: entity
+  id: ComputerSalvageBounty
+  parent: BaseComputerAiAccess
+  name: salvage bounty computer
+  description: Lists active salvage bounties. Print a manifest, label a crate, fill it with the requested goods, then sell it at the salvage sale console for bonus tickets.
+  components:
+  - type: Sprite
+    layers:
+    - map: ["computerLayerBody"]
+      state: computer
+    - map: ["computerLayerKeyboard"]
+      state: generic_keyboard
+    - map: ["computerLayerScreen"]
+      state: bounty
+    - map: ["computerLayerKeys"]
+      state: tech_key
+    - map: [ "enum.WiresVisualLayers.MaintenancePanel" ]
+      state: generic_panel_open
+  - type: Anchorable
+    flags:
+    - Anchorable
+  - type: SalvageBountyConsole
+  - type: ActivatableUI
+    key: enum.SalvageBountyConsoleUiKey.Bounty
+  - type: UserInterface
+    interfaces:
+      enum.SalvageBountyConsoleUiKey.Bounty:
+        type: SalvageBountyConsoleBoundUserInterface
+      enum.WiresUiKey.Key:
+        type: WiresBoundUserInterface
+  - type: Computer
+    board: SalvageSaleComputerCircuitboard
+  - type: PointLight
+    radius: 2.5
+    energy: 1.5
+    color: "#e89a47"
