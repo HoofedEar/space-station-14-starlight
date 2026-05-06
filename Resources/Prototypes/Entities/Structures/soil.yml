@@ -5,6 +5,7 @@
   placement:
     mode: SnapgridCenter
   components:
+  - type: BlocksDigging
   - type: Clickable
   - type: InteractionOutline
   - type: Physics

@@ -97,6 +97,18 @@ public sealed partial class StationDropshipPlanetComponent : Component
     public bool Announced;
 
     /// <summary>
+    /// Radius in tiles around the dropship and each dungeon center for which
+    /// biome marker layers (ore + mob spawn scoring) are eagerly evaluated at
+    /// world-gen time. Without this, the first time a player walks into a
+    /// virgin marker chunk the server tick stalls for several seconds while
+    /// <c>BiomeSystem.BuildMarkerChunks</c> scans 15 layers across the new
+    /// chunk. Doing it up-front collapses many per-crossing freezes into one
+    /// bounded spike just after dungeon generation. Set to 0 to disable.
+    /// </summary>
+    [DataField]
+    public float MarkerPreloadRadius = 128f;
+
+    /// <summary>
     /// Prototype spawned at every generated dungeon's center so handheld
     /// station maps (and anything else reading <c>NavMapBeaconComponent</c>) can
     /// locate them. Spawned anchored on the planet grid after generation.

@@ -58,11 +58,10 @@ public sealed class ProjectileSystem : SharedProjectileSystem
             damageRequired -= damageableComponent.TotalDamage;
             damageRequired = FixedPoint2.Max(damageRequired, FixedPoint2.Zero);
         }
-        var deleted = Deleted(target);
 
         if (_damageableSystem.TryChangeDamage((target, damageableComponent), ev.Damage, out var damage, component.IgnoreResistances, origin: component.Shooter)) // Starlight
         {
-            if (!deleted)
+            if (!TerminatingOrDeleted(target))
             {
                 _color.RaiseEffect(Color.Red, new List<EntityUid> { target }, Filter.Pvs(target, entityManager: EntityManager));
             }
@@ -79,7 +78,9 @@ public sealed class ProjectileSystem : SharedProjectileSystem
             component.ProjectileSpent = true;
         }
 
-        if (!deleted)
+        // TryChangeDamage above may have destroyed the target (e.g. a destructible reaching its threshold),
+        // so re-check before touching anything that needs the target's TransformComponent.
+        if (!TerminatingOrDeleted(target))
         {
             _guns.PlayImpactSound(target, damage, component.SoundHit, component.ForceSound);
 

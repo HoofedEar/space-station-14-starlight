@@ -25,6 +25,11 @@
   - type: PhysicalComposition
     materialComposition:
       Steel: 100
+  - type: TileDigging
+    diggableTiles:
+    - FloorPlanetDirt
+    spawns: hydroponicsSoil
+    delay: 2
 
 - type: entity
   name: plant clippers
@@ -144,6 +149,10 @@
       sprite: Objects/Tools/Hydroponics/spade.rsi
   - type: Shovel
     speedModifier: 0.75 # slower at digging than a full-sized shovel
+  - type: TileDigging
+    diggableTiles:
+    - FloorPlanetGrass
+    spawns: Coal1
   - type: PhysicalComposition
     materialComposition:
       Steel: 100

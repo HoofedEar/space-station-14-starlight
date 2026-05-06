@@ -548,6 +548,10 @@
   - type: StaticPrice
     price: 25
   - type: Shovel
+  - type: TileDigging
+    diggableTiles:
+    - FloorPlanetGrass
+    spawns: Coal1
 
 - type: entity
   parent: BaseItem

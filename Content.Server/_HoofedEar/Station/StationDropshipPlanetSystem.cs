@@ -213,6 +213,37 @@ public sealed class StationDropshipPlanetSystem : EntitySystem
         ClearLandingZone(map, dropship, origin, comp.LandingZoneBuffer);
         SpawnDropshipBeacon(map, dropship, origin, comp);
         SpawnDungeonBeacons(map, dungeons, comp);
+        PreloadMarkerArea(map.Owner, origin, dungeons, comp);
+    }
+
+    /// <summary>
+    /// Eagerly scores biome marker layers in a bubble around the dropship and
+    /// every dungeon center so the per-tile <c>BuildMarkerChunks</c> scan
+    /// doesn't stall a server tick the first time a player walks into a
+    /// virgin marker chunk. The actual entity instantiation still happens
+    /// lazily in <c>LoadChunkMarkers</c>; only the parallel scoring pass is
+    /// front-loaded.
+    /// </summary>
+    private void PreloadMarkerArea(
+        EntityUid mapUid,
+        Vector2 dropshipOrigin,
+        List<(Vector2i Pos, ProtoId<DungeonConfigPrototype> ConfigId, bool IsLandingSite)> dungeons,
+        StationDropshipPlanetComponent comp)
+    {
+        if (comp.MarkerPreloadRadius <= 0f)
+            return;
+
+        if (!TryComp<BiomeComponent>(mapUid, out var biome))
+            return;
+
+        var size = new Vector2(comp.MarkerPreloadRadius * 2f);
+
+        _biome.Preload(mapUid, biome, Box2.CenteredAround(dropshipOrigin, size));
+
+        foreach (var (pos, _, _) in dungeons)
+        {
+            _biome.Preload(mapUid, biome, Box2.CenteredAround(new Vector2(pos.X, pos.Y), size));
+        }
     }
 
     private void SpawnDropshipBeacon(
