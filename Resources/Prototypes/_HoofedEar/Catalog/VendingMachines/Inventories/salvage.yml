@@ -328,6 +328,26 @@
     - !type:BuyerAccessCondition
 
 - type: listing
+  id: VendorSalvageSoloCombatMedipen
+  productEntity: CombatMedipen
+  cost:
+    SalvageTicket: 50
+  categories:
+    - SalvageSoloConsumeables
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
+  id: VendorSalvageSoloRadAutoInjector
+  productEntity: RadAutoInjector
+  cost:
+    SalvageTicket: 50
+  categories:
+    - SalvageSoloConsumeables
+  conditions:
+    - !type:BuyerAccessCondition
+
+- type: listing
   id: VendorSalvageSoloSpeedLoaderMagnumSP
   productEntity: SpeedLoaderMagnumSP
   cost:
